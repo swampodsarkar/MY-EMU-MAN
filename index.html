@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Wave OS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a, #1d4ed8);
+    }
+
+    .desktop {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .wallpaper-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 25%),
+                  radial-gradient(circle at bottom left, rgba(255,255,255,0.08), transparent 25%);
+      pointer-events: none;
+    }
+
+    .desktop-icons {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .icon {
+      width: 86px;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .icon-box {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+    }
+
+    .taskbar {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 1200px;
+      height: 62px;
+      border-radius: 18px;
+      background: rgba(16, 24, 40, 0.65);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .taskbar-left, .taskbar-center, .taskbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+    }
+
+    .start-btn, .tb-app, .reward-btn {
+      height: 42px;
+      min-width: 42px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      cursor: pointer;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .start-btn:hover, .tb-app:hover, .reward-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .clock {
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .window {
+      position: absolute;
+      top: 90px;
+      left: 160px;
+      width: 900px;
+      height: 560px;
+      background: rgba(10, 18, 34, 0.88);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+    }
+
+    .window.active {
+      display: block;
+    }
+
+    .titlebar {
+      height: 52px;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      cursor: move;
+      color: white;
+    }
+
+    .title-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .title-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .title-actions button {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .title-actions button:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .window-body {
+      width: 100%;
+      height: calc(100% - 52px);
+      background: #0a0f1d;
+      position: relative;
+    }
+
+    .hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 4;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.36);
+      color: white;
+    }
+
+    .hud-left, .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      font-size: 14px;
+    }
+
+    .hud button {
+      border: none;
+      border-radius: 12px;
+      padding: 9px 12px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .hud button:hover {
+      background: #1d4ed8;
+    }
+
+    .emulator-wrap {
+      position: absolute;
+      inset: 0;
+      padding-top: 72px;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+
+    .start-menu {
+      position: absolute;
+      bottom: 84px;
+      left: 18px;
+      width: 320px;
+      background: rgba(15, 23, 42, 0.84);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+      padding: 16px;
+      color: white;
+      display: none;
+      z-index: 1001;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+
+    .start-menu.active {
+      display: block;
+    }
+
+    .menu-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .menu-card:hover {
+      background: rgba(255,255,255,0.14);
+    }
+
+    .reward-panel {
+      position: absolute;
+      top: 90px;
+      right: 20px;
+      width: 290px;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 16px;
+      color: white;
+      display: none;
+      z-index: 999;
+      backdrop-filter: blur(12px);
+    }
+
+    .reward-panel.active {
+      display: block;
+    }
+
+    .reward-panel h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .reward-panel p {
+      font-size: 14px;
+      opacity: 0.92;
+      line-height: 1.5;
+    }
+
+    .reward-panel button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #16a34a;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .reward-panel button:hover {
+      background: #15803d;
+    }
+
+    .toast {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      min-width: 250px;
+      background: rgba(15, 23, 42, 0.9);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: none;
+      z-index: 2000;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.35);
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    .info-window-content {
+      color: white;
+      padding: 20px;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .info-window-content h2 {
+      margin-top: 0;
+    }
+
+    @media (max-width: 980px) {
+      .window {
+        width: calc(100% - 20px);
+        height: calc(100% - 110px);
+        left: 10px !important;
+        top: 10px !important;
+      }
+
+      .taskbar {
+        height: 58px;
+      }
+
+      .taskbar-center {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <div class="wallpaper-overlay"></div>
+
+    <div class="desktop-icons">
+      <div class="icon" onclick="openWindow('emuWindow')">
+        <div class="icon-box">🎮</div>
+        <div>Emulator</div>
+      </div>
+      <div class="icon" onclick="toggleRewards()">
+        <div class="icon-box">💰</div>
+        <div>Rewards</div>
+      </div>
+      <div class="icon" onclick="openWindow('aboutWindow')">
+        <div class="icon-box">ℹ️</div>
+        <div>About</div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <div id="rewardPanel" class="reward-panel">
+      <h3>Reward Center</h3>
+      <p>Watch ads and collect coins. Use coins to unlock gameplay sessions.</p>
+      <p><strong>1 Ad = 3 Coins</strong></p>
+      <p><strong>Game Start = 5 Coins</strong></p>
+      <button onclick="watchAd()">Watch Ad & Earn Coins</button>
+    </div>
+
+    <div id="startMenu" class="start-menu">
+      <div class="menu-title">Chat Wave OS</div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="openWindow('emuWindow'); closeStartMenu();">🎮 Emulator</div>
+        <div class="menu-card" onclick="toggleRewards(); closeStartMenu();">💰 Reward Center</div>
+        <div class="menu-card" onclick="openWindow('aboutWindow'); closeStartMenu();">ℹ️ About</div>
+        <div class="menu-card" onclick="showToast('System running normally')">⚙️ Settings</div>
+      </div>
+    </div>
+
+    <div id="emuWindow" class="window active">
+      <div class="titlebar" onmousedown="dragStart(event, 'emuWindow')">
+        <div class="title-left">
+          <span>🎮</span>
+          <span>Chat Wave Emulator</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('emuWindow')">—</button>
+          <button onclick="toggleMaximize('emuWindow')">▢</button>
+          <button onclick="closeWindow('emuWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="hud">
+          <div class="hud-left">
+            <div class="pill">Coins: <span id="coinCount">10</span></div>
+            <div class="pill">Status: <span id="statusText">Ready</span></div>
+            <div class="pill">Session: <span id="sessionTime">00:00</span></div>
+          </div>
+          <div class="hud-right">
+            <button onclick="startGame()">Start Game</button>
+            <button onclick="endSession()">End Session</button>
+          </div>
+        </div>
+
+        <div class="emulator-wrap">
+          <div id="game"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="aboutWindow" class="window" style="width:520px;height:380px;left:240px;top:120px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'aboutWindow')">
+        <div class="title-left">
+          <span>ℹ️</span>
+          <span>About Chat Wave OS</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('aboutWindow')">—</button>
+          <button onclick="closeWindow('aboutWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="info-window-content">
+          <h2>Chat Wave OS</h2>
+          <p>This is a browser-based desktop style emulator launcher.</p>
+          <p>Use coins to start gameplay sessions. Earn more coins from rewards.</p>
+          <p>Put your ROM file and BIOS in the same folder as this HTML file if you are using local setup.</p>
+          <p><strong>Required files:</strong></p>
+          <p>- Pokemon - FireRed Version (USA, Europe) (Rev 1).gba</p>
+          <p>- gba_bios.bin</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="taskbar">
+      <div class="taskbar-left">
+        <button class="start-btn" onclick="toggleStartMenu()">Start</button>
+      </div>
+
+      <div class="taskbar-center">
+        <button class="tb-app" onclick="openWindow('emuWindow')">🎮 Emulator</button>
+        <button class="tb-app" onclick="toggleRewards()">💰 Rewards</button>
+        <button class="tb-app" onclick="openWindow('aboutWindow')">ℹ️ About</button>
+      </div>
+
+      <div class="taskbar-right">
+        <button class="reward-btn" onclick="watchAd()">+3 Coins</button>
+        <div class="clock" id="clock">00:00</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let coins = 10;
+    let sessionSeconds = 0;
+    let sessionInterval = null;
+    let isRunning = false;
+
+    function updateCoins() {
+      document.getElementById("coinCount").textContent = coins;
+    }
+
+    function setStatus(text) {
+      document.getElementById("statusText").textContent = text;
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
+      return m + ":" + s;
+    }
+
+    function updateSessionTime() {
+      document.getElementById("sessionTime").textContent = formatTime(sessionSeconds);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toast._hide);
+      toast._hide = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2600);
+    }
+
+    function watchAd() {
+      coins += 3;
+      updateCoins();
+      showToast("Ad watched. You earned 3 coins.");
+    }
+
+    function startGame() {
+      if (isRunning) {
+        showToast("A session is already running.");
+        return;
+      }
+
+      if (coins < 5) {
+        showToast("Not enough coins. Watch an ad first.");
+        return;
+      }
+
+      coins -= 5;
+      updateCoins();
+      sessionSeconds = 600;
+      updateSessionTime();
+      isRunning = true;
+      setStatus("Running");
+      showToast("Game session started. 10 minutes unlocked.");
+
+      sessionInterval = setInterval(() => {
+        sessionSeconds--;
+        updateSessionTime();
+
+        if (sessionSeconds <= 0) {
+          endSession(true);
+        }
+      }, 1000);
+    }
+
+    function endSession(auto = false) {
+      if (sessionInterval) clearInterval(sessionInterval);
+      sessionInterval = null;
+      isRunning = false;
+      sessionSeconds = 0;
+      updateSessionTime();
+      setStatus("Ready");
+      showToast(auto ? "Session ended. Get more coins to play again." : "Session ended.");
+    }
+
+    function openWindow(id) {
+      const win = document.getElementById(id);
+      win.classList.add("active");
+      bringToFront(win);
+    }
+
+    function closeWindow(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function minimizeWindow(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function toggleRewards() {
+      document.getElementById("rewardPanel").classList.toggle("active");
+    }
+
+    function toggleStartMenu() {
+      document.getElementById("startMenu").classList.toggle("active");
+    }
+
+    function closeStartMenu() {
+      document.getElementById("startMenu").classList.remove("active");
+    }
+
+    function bringToFront(el) {
+      const all = document.querySelectorAll(".window");
+      all.forEach(w => w.style.zIndex = 50);
+      el.style.zIndex = 120;
+    }
+
+    function toggleMaximize(id) {
+      const win = document.getElementById(id);
+      if (win.dataset.max === "1") {
+        win.style.top = win.dataset.prevTop;
+        win.style.left = win.dataset.prevLeft;
+        win.style.width = win.dataset.prevWidth;
+        win.style.height = win.dataset.prevHeight;
+        win.dataset.max = "0";
+      } else {
+        win.dataset.prevTop = win.style.top || "90px";
+        win.dataset.prevLeft = win.style.left || "160px";
+        win.dataset.prevWidth = win.style.width || "900px";
+        win.dataset.prevHeight = win.style.height || "560px";
+        win.style.top = "10px";
+        win.style.left = "10px";
+        win.style.width = "calc(100% - 20px)";
+        win.style.height = "calc(100% - 90px)";
+        win.dataset.max = "1";
+      }
+    }
+
+    let dragData = null;
+
+    function dragStart(e, id) {
+      const win = document.getElementById(id);
+      bringToFront(win);
+      dragData = {
+        el: win,
+        startX: e.clientX,
+        startY: e.clientY,
+        left: win.offsetLeft,
+        top: win.offsetTop
+      };
+      document.addEventListener("mousemove", dragging);
+      document.addEventListener("mouseup", dragEnd);
+    }
+
+    function dragging(e) {
+      if (!dragData) return;
+      const dx = e.clientX - dragData.startX;
+      const dy = e.clientY - dragData.startY;
+      dragData.el.style.left = dragData.left + dx + "px";
+      dragData.el.style.top = dragData.top + dy + "px";
+    }
+
+    function dragEnd() {
+      document.removeEventListener("mousemove", dragging);
+      document.removeEventListener("mouseup", dragEnd);
+      dragData = null;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("clock").textContent = h + ":" + m;
+    }
+
+    updateCoins();
+    updateSessionTime();
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".start-btn") && !e.target.closest(".start-menu")) {
+        closeStartMenu();
+      }
+    });
+  </script>
+
+  <script>
+    EJS_player = "#game";
+    EJS_core = "gba";
+    EJS_gameName = "Pokemon";
+    EJS_color = "#0064ff";
+    EJS_startOnLoaded = true;
+    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+    EJS_gameUrl = "Pokemon - FireRed Version (USA, Europe) (Rev 1).gba";
+    EJS_biosUrl = "gba_bios.bin";
+  </script>
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+</body>
+</html>
