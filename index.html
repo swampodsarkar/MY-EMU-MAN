@@ -3,451 +3,338 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SRS OS Player</title>
+  <title>SRS OS Player - Final</title>
   <style>
-    * { box-sizing: border-box; user-select: none; }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
       font-family: Arial, sans-serif;
-      background: #07111f;
+      background: linear-gradient(135deg, #08111e 0%, #102341 45%, #14305d 100%);
+      color: #f4f8ff;
+      overflow: hidden;
     }
 
     :root {
-      --glass: rgba(255,255,255,0.10);
-      --glass-2: rgba(255,255,255,0.14);
-      --border: rgba(255,255,255,0.14);
-      --panel: rgba(11, 20, 35, 0.82);
-      --panel-2: rgba(11, 20, 35, 0.92);
-      --text: #f4f8ff;
-      --muted: #bfd0ea;
+      --panel: rgba(10, 18, 34, 0.88);
+      --panel-2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.12);
+      --muted: #bdd0ee;
       --blue: #2563eb;
       --green: #16a34a;
       --red: #dc2626;
       --yellow: #f59e0b;
-      --purple: #7c3aed;
       --shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
-    body.light {
-      --glass: rgba(255,255,255,0.55);
-      --glass-2: rgba(255,255,255,0.72);
-      --border: rgba(100,120,170,0.20);
-      --panel: rgba(245,249,255,0.78);
-      --panel-2: rgba(255,255,255,0.92);
-      --text: #10223f;
-      --muted: #516986;
-      --blue: #2563eb;
-      --green: #15803d;
-      --red: #dc2626;
-      --yellow: #d97706;
-      --purple: #7c3aed;
-      --shadow: 0 20px 60px rgba(20,40,80,0.15);
-    }
-
-    body {
-      background:
-        radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 20%),
-        radial-gradient(circle at bottom left, rgba(96,165,250,0.18), transparent 24%),
-        linear-gradient(135deg, #08111e 0%, #102341 40%, #14305d 100%);
-      color: var(--text);
-    }
-
-    .desktop {
-      position: relative;
+    .app-shell {
       width: 100%;
       height: 100%;
-      overflow: hidden;
-    }
-
-    .wallpaper-overlay {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.10), transparent 20%),
-        radial-gradient(circle at 80% 15%, rgba(255,255,255,0.08), transparent 18%),
-        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.06), transparent 18%);
-      pointer-events: none;
-    }
-
-    .desktop-icons {
-      position: absolute;
-      top: 22px;
-      left: 22px;
       display: grid;
-      grid-template-columns: repeat(2, 92px);
-      gap: 18px 16px;
-      z-index: 5;
+      grid-template-columns: 86px 1fr;
     }
 
-    .icon {
-      width: 92px;
-      text-align: center;
-      color: var(--text);
-      cursor: pointer;
-      font-size: 12px;
+    .sidebar {
+      background: rgba(0,0,0,0.22);
+      border-right: 1px solid var(--border);
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
     }
 
-    .icon-box {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 8px;
+    .side-btn {
+      width: 62px;
+      height: 62px;
       border-radius: 18px;
-      background: var(--glass);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(14px);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      transition: transform .18s ease, background .18s ease;
-      font-size: 26px;
-    }
-
-    .icon:hover .icon-box {
-      transform: translateY(-2px) scale(1.03);
-      background: var(--glass-2);
-    }
-
-    .taskbar {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 1320px;
-      height: 64px;
-      border-radius: 18px;
-      background: var(--panel);
-      backdrop-filter: blur(16px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      border: 1px solid var(--border);
-      z-index: 3000;
-      box-shadow: var(--shadow);
-    }
-
-    .taskbar-left, .taskbar-center, .taskbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .start-btn, .tb-app, .reward-btn {
-      height: 42px;
-      min-width: 42px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      background: rgba(255,255,255,0.10);
-      color: var(--text);
-      cursor: pointer;
-      padding: 0 14px;
-      font-size: 14px;
-      transition: background .18s ease, border-color .18s ease;
-    }
-
-    .start-btn:hover, .tb-app:hover, .reward-btn:hover, .menu-card:hover, .action-btn:hover {
-      background: rgba(255,255,255,0.18);
-      border-color: var(--border);
-    }
-
-    .tb-app.active-app {
-      background: rgba(37,99,235,0.26);
-      border-color: rgba(96,165,250,0.38);
-    }
-
-    .clock {
-      font-size: 14px;
-      color: var(--text);
-    }
-
-    .window {
-      position: absolute;
-      top: 100px;
-      left: 180px;
-      width: 920px;
-      height: 580px;
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      display: none;
-      z-index: 100;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      animation: popin .18s ease;
-    }
-
-    @keyframes popin {
-      from { transform: scale(.985); opacity: .65; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .window.active { display: block; }
-
-    .titlebar {
-      height: 52px;
-      background: rgba(255,255,255,0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      cursor: move;
-      color: var(--text);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .title-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .title-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .title-actions button {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      border: none;
       background: rgba(255,255,255,0.08);
-      color: var(--text);
+      color: white;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 24px;
     }
 
-    .title-actions button:hover { background: rgba(255,255,255,0.16); }
+    .side-btn.active {
+      background: rgba(37,99,235,0.28);
+      border-color: rgba(96,165,250,0.4);
+    }
 
-    .window-body {
-      width: 100%;
-      height: calc(100% - 52px);
-      position: relative;
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .top-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .view {
+      display: none;
+      height: calc(100vh - 70px);
       overflow: auto;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), #0a1222;
-      color: var(--text);
+      padding: 16px;
     }
 
-    body.light .window-body {
-      background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.08)), #eef5ff;
+    .view.active {
+      display: block;
     }
 
-    .pane { padding: 18px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
 
-    .card-grid {
+    .card + .card {
+      margin-top: 16px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: 360px 1fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .games-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
     }
 
-    .card {
+    .game-card {
       background: rgba(255,255,255,0.08);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 16px;
-      color: var(--text);
-    }
-
-    .muted { color: var(--muted); }
-
-    .action-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.12);
-      color: var(--text);
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-
-    .primary { background: var(--blue); color: white; }
-    .success { background: var(--green); color: white; }
-    .danger { background: var(--red); color: white; }
-    .warning { background: var(--yellow); color: white; }
-    .purple { background: var(--purple); color: white; }
-
-    .hud {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      z-index: 20;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(0,0,0,0.36);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .hud-left, .hud-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .pill {
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.10);
-      font-size: 14px;
-    }
-
-    .hud button {
-      border: none;
-      border-radius: 12px;
-      padding: 9px 12px;
-      background: var(--blue);
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .game-shell {
-      position: absolute;
-      top: 72px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 14px;
-      padding: 14px;
-    }
-
-    .sidebar-panel {
-      overflow: auto;
-    }
-
-    .emulator-panel {
-      position: relative;
-      background: #05070e;
-      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    #game {
-      width: 100%;
-      height: 100%;
-      min-height: 400px;
-    }
-
-    .game-lock {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(5,8,15,0.6), rgba(5,8,15,0.92));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 30;
-    }
-
-    .game-lock.hidden { display: none; }
-
-    .lock-card {
-      width: min(460px, calc(100% - 30px));
-      background: rgba(12,18,31,0.92);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
-      padding: 24px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      color: white;
-    }
-
-    .game-card-thumb {
-      height: 100px;
-      border-radius: 14px;
-      margin-bottom: 12px;
+    .game-thumb {
+      height: 130px;
       background: linear-gradient(135deg, rgba(37,99,235,0.55), rgba(125,176,255,0.18));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 28px;
       overflow: hidden;
     }
 
-    .game-card-thumb img {
+    .game-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .start-menu {
-      position: absolute;
-      bottom: 84px;
-      left: 18px;
-      width: 380px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      backdrop-filter: blur(16px);
-      padding: 16px;
-      color: var(--text);
-      display: none;
-      z-index: 3100;
-      box-shadow: var(--shadow);
+    .game-body {
+      padding: 14px;
     }
 
-    .start-menu.active { display: block; }
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-    .menu-top {
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+      color: white;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid transparent;
+      font-size: 14px;
+    }
+
+    .btn.blue { background: var(--blue); }
+    .btn.green { background: var(--green); }
+    .btn.red { background: var(--red); }
+    .btn.yellow { background: var(--yellow); color: #111; }
+
+    #gameArea {
+      position: relative;
+      min-height: 520px;
+      background: #05070e;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    #game {
+      width: 100%;
+      height: 520px;
+    }
+
+    .game-lock {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5,8,15,0.55), rgba(5,8,15,0.92));
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+      justify-content: center;
+      padding: 16px;
     }
 
-    .menu-title { font-size: 18px; font-weight: 700; }
-
-    .menu-search {
-      width: 100%;
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      padding: 0 12px;
-      outline: none;
-      margin-bottom: 12px;
+    .game-lock.hidden {
+      display: none;
     }
 
-    .menu-grid {
+    .lock-card {
+      width: min(460px, 100%);
+      text-align: center;
+      background: rgba(12,18,31,0.95);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .stats {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
     }
 
-    .menu-card {
+    .stat {
       background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      cursor: pointer;
-      text-align: center;
-      border: 1px solid transparent;
-      color: var(--text);
+    }
+
+    .big {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 6px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .list-item {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #dce9ff;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .preview-box {
+      margin-top: 12px;
+      min-height: 170px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .preview-box img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
     }
 
     .toast-stack {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 4000;
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 9999;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -455,341 +342,236 @@
 
     .toast {
       min-width: 260px;
-      max-width: 340px;
-      background: rgba(15, 23, 42, 0.92);
+      max-width: 360px;
+      background: rgba(15,23,42,0.96);
       color: white;
       padding: 14px 16px;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.12);
       box-shadow: 0 14px 34px rgba(0,0,0,0.35);
-      animation: toastIn .22s ease;
     }
 
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .wallet-stat {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 4px 0 8px;
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .history-item {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .settings-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .toggle {
-      width: 56px;
-      height: 30px;
-      background: rgba(255,255,255,0.14);
-      border-radius: 999px;
-      position: relative;
-      cursor: pointer;
-      border: 1px solid var(--border);
-    }
-
-    .toggle::after {
-      content: "";
-      position: absolute;
-      left: 4px;
-      top: 4px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: white;
-      transition: .2s ease;
-    }
-
-    .toggle.on { background: rgba(37,99,235,0.65); }
-    .toggle.on::after { left: 30px; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .stat-card {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .stat-card .big {
-      font-size: 28px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .ad-box {
-      min-height: 110px;
-      border: 1px dashed rgba(255,255,255,0.22);
-      border-radius: 14px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+      word-break: break-word;
     }
 
     @media (max-width: 980px) {
-      .window {
-        width: calc(100% - 20px) !important;
-        height: calc(100% - 100px) !important;
-        left: 10px !important;
-        top: 10px !important;
+      .app-shell {
+        grid-template-columns: 1fr;
       }
-      .taskbar-center { display: none; }
-      .desktop-icons { grid-template-columns: repeat(2, 82px); }
-      .game-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        flex-direction: row;
+        justify-content: center;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .topbar {
+        height: auto;
+        padding: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .view {
+        height: auto;
+      }
+      .grid-2, .form-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="desktop">
-    <div class="wallpaper-overlay"></div>
+  <div class="toast-stack" id="toastStack"></div>
 
-    <div class="desktop-icons">
-      <div class="icon" onclick="openApp('emuWindow', 'app-emulator')">
-        <div class="icon-box">🎮</div>
-        <div>Games</div>
-      </div>
-      <div class="icon" onclick="openApp('taskWindow', 'app-tasks')">
-        <div class="icon-box">✅</div>
-        <div>Tasks</div>
-      </div>
-      <div class="icon" onclick="openApp('adWindow', 'app-ads')">
-        <div class="icon-box">📢</div>
-        <div>Ads</div>
-      </div>
-      <div class="icon" onclick="openApp('walletWindow', 'app-wallet')">
-        <div class="icon-box">💰</div>
-        <div>Wallet</div>
-      </div>
-      <div class="icon" onclick="openApp('rewardWindow', 'app-rewards')">
-        <div class="icon-box">🎁</div>
-        <div>Rewards</div>
-      </div>
-      <div class="icon" onclick="openApp('settingsWindow', 'app-settings')">
-        <div class="icon-box">⚙️</div>
-        <div>Settings</div>
-      </div>
+  <div class="app-shell">
+    <div class="sidebar">
+      <button class="side-btn active" data-view="playerView" onclick="switchView('playerView', this)">🎮</button>
+      <button class="side-btn" data-view="tasksView" onclick="switchView('tasksView', this)">✅</button>
+      <button class="side-btn" data-view="walletView" onclick="switchView('walletView', this)">💰</button>
+      <button class="side-btn" data-view="adsView" onclick="switchView('adsView', this)">📢</button>
+      <button class="side-btn" data-view="adminView" onclick="switchView('adminView', this)">🛠️</button>
     </div>
 
-    <div class="toast-stack" id="toastStack"></div>
-
-    <div id="startMenu" class="start-menu">
-      <div class="menu-top">
-        <div class="menu-title">SRS OS Player</div>
-        <button class="action-btn" onclick="showToast('System is active')">Power</button>
-      </div>
-      <input class="menu-search" type="text" placeholder="Search apps..." oninput="filterMenu(this.value)" />
-      <div class="menu-grid" id="menuGrid">
-        <div class="menu-card" data-name="games emulator" onclick="openApp('emuWindow', 'app-emulator'); closeStartMenu();">Games</div>
-        <div class="menu-card" data-name="tasks task hub" onclick="openApp('taskWindow', 'app-tasks'); closeStartMenu();">Tasks</div>
-        <div class="menu-card" data-name="ads ad section" onclick="openApp('adWindow', 'app-ads'); closeStartMenu();">Ads</div>
-        <div class="menu-card" data-name="wallet income points" onclick="openApp('walletWindow', 'app-wallet'); closeStartMenu();">Wallet</div>
-        <div class="menu-card" data-name="rewards" onclick="openApp('rewardWindow', 'app-rewards'); closeStartMenu();">Rewards</div>
-        <div class="menu-card" data-name="settings" onclick="openApp('settingsWindow', 'app-settings'); closeStartMenu();">Settings</div>
-      </div>
-    </div>
-
-    <div id="emuWindow" class="window active" style="z-index:150;">
-      <div class="titlebar" onmousedown="dragStart(event, 'emuWindow')">
-        <div class="title-left"><span>SRS OS Player Games</span></div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('emuWindow')">—</button>
-          <button onclick="toggleMaximize('emuWindow')">▢</button>
-          <button onclick="closeWindow('emuWindow')">✕</button>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">SRS OS Player</div>
+        <div class="top-right">
+          <div class="pill">Wallet: <span id="coinCount">15</span> pts</div>
+          <div class="pill">Status: <span id="statusText">Locked</span></div>
+          <div class="pill">Session: <span id="sessionTime">00:00</span></div>
+          <div class="pill">Game: <span id="currentGameName">None</span></div>
+          <div class="pill" id="clock">00:00</div>
         </div>
       </div>
-      <div class="window-body">
-        <div class="hud">
-          <div class="hud-left">
-            <div class="pill">Wallet: <span id="coinCount">15</span> pts</div>
-            <div class="pill">Status: <span id="statusText">Locked</span></div>
-            <div class="pill">Session: <span id="sessionTime">00:00</span></div>
-            <div class="pill">Game: <span id="currentGameName">None</span></div>
+
+      <div class="view active" id="playerView">
+        <div class="grid grid-2">
+          <div class="card">
+            <h2 style="margin-top:0;">Game Library</h2>
+            <div id="gameLibrary" class="games-grid">
+              <div class="muted">Loading games...</div>
+            </div>
           </div>
-          <div class="hud-right">
-            <button onclick="startGame()">Start Game</button>
-            <button onclick="endSession()">End Session</button>
+
+          <div class="card">
+            <div class="row" style="margin-bottom:12px;">
+              <button class="btn blue" onclick="startGame()">Start Game</button>
+              <button class="btn red" onclick="endSession()">End Session</button>
+            </div>
+
+            <div id="gameArea">
+              <div id="game"></div>
+              <div class="game-lock" id="gameLock">
+                <div class="lock-card">
+                  <h2 style="margin-top:0;">Game Session Locked</h2>
+                  <p class="muted">আগে game select করো, তারপর Start Game চাপো।</p>
+                  <button class="btn blue" onclick="startGame()">Unlock & Start</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="game-shell">
-          <div class="sidebar-panel">
+      <div class="view" id="tasksView">
+        <div class="card">
+          <h2 style="margin-top:0;">Task & Reward Center</h2>
+          <div class="stats">
+            <div class="stat"><div class="muted">Wallet Balance</div><div class="big" id="taskWalletStat">15</div></div>
+            <div class="stat"><div class="muted">Tasks Completed</div><div class="big" id="tasksCompletedStat">0</div></div>
+            <div class="stat"><div class="muted">Today Earned</div><div class="big" id="todayEarnedStat">0</div></div>
+            <div class="stat"><div class="muted">Play Sessions</div><div class="big" id="playSessionsStat">0</div></div>
+          </div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn green" onclick="completeTask('Reward ad watched', 3)">Watch Ad +3</button>
+            <button class="btn blue" onclick="completeTask('Daily task completed', 4)">Complete Daily +4</button>
+            <button class="btn yellow" onclick="completeTask('Offerwall task completed', 6)">Offer Task +6</button>
+            <button class="btn blue" onclick="claimDaily()">Claim Daily +5</button>
+          </div>
+
+          <div class="list" id="taskHistory"></div>
+        </div>
+      </div>
+
+      <div class="view" id="walletView">
+        <div class="card">
+          <h2 style="margin-top:0;">Wallet</h2>
+          <div class="stats">
+            <div class="stat"><div class="muted">Current Balance</div><div class="big" id="walletCoins">15</div></div>
+            <div class="stat"><div class="muted">Selected Game Cost</div><div class="big" id="selectedGameCost">5</div></div>
+            <div class="stat"><div class="muted">Today Earned</div><div class="big" id="walletEarned">0</div></div>
+          </div>
+          <div class="list" id="walletHistory"></div>
+        </div>
+      </div>
+
+      <div class="view" id="adsView">
+        <div class="card">
+          <h2 style="margin-top:0;">Adsterra Section</h2>
+          <div class="grid grid-3">
             <div class="card">
-              <h3 style="margin-top:0;">Game Library</h3>
-              <div id="gameLibrary" class="card-grid">
-                <div class="muted">Loading games...</div>
+              <h3 style="margin-top:0;">Banner Zone</h3>
+              <div class="small">এখানে Adsterra banner code বসাও।</div>
+              <div style="margin-top:10px; min-height:100px; border:1px dashed rgba(255,255,255,.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                Ad Banner
               </div>
             </div>
-          </div>
-
-          <div class="emulator-panel">
-            <div id="game"></div>
-            <div class="game-lock" id="gameLock">
-              <div class="lock-card">
-                <h2 style="margin:0 0 10px;">Game Session Locked</h2>
-                <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">
-                  আগে game select করো, তারপর Start Game চাপো।
-                </p>
-                <button class="action-btn primary" onclick="startGame()">Unlock & Start</button>
-              </div>
+            <div class="card">
+              <h3 style="margin-top:0;">Direct Link</h3>
+              <a id="adsterraDirectLink" href="#" target="_blank" style="color:#fff;">Open Sponsored Link</a>
+            </div>
+            <div class="card">
+              <h3 style="margin-top:0;">Reward Demo</h3>
+              <button class="btn green" onclick="completeTask('Rewarded ad completed', 3)">Rewarded +3</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id="taskWindow" class="window" style="width:820px;height:560px;left:220px;top:90px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'taskWindow')">
-        <div class="title-left"><span>Task Hub</span></div>
-        <div class="title-actions"><button onclick="minimizeWindow('taskWindow')">—</button><button onclick="closeWindow('taskWindow')">✕</button></div>
-      </div>
-      <div class="window-body pane">
-        <div class="stats-grid">
-          <div class="stat-card"><div class="muted">Wallet Balance</div><div class="big" id="taskWalletStat">15</div></div>
-          <div class="stat-card"><div class="muted">Tasks Completed</div><div class="big" id="tasksCompletedStat">0</div></div>
-          <div class="stat-card"><div class="muted">Today Earned</div><div class="big" id="todayEarnedStat">0</div></div>
-          <div class="stat-card"><div class="muted">Game Sessions</div><div class="big" id="playSessionsStat">0</div></div>
-        </div>
-        <div class="card-grid">
-          <div class="card">
-            <h3>Watch Reward Ad</h3>
-            <p class="muted">Click করলে demo reward add হবে।</p>
-            <button class="action-btn success" onclick="completeTask('Reward ad watched', 3)">Watch Ad +3</button>
-          </div>
-          <div class="card">
-            <h3>Daily Bonus Task</h3>
-            <p class="muted">Complete daily task.</p>
-            <button class="action-btn primary" onclick="completeTask('Daily task completed', 4)">Complete Daily +4</button>
-          </div>
-          <div class="card">
-            <h3>Offerwall Task</h3>
-            <p class="muted">Demo offerwall reward.</p>
-            <button class="action-btn purple" onclick="completeTask('Offerwall task completed', 6)">Offer Task +6</button>
-          </div>
-        </div>
-        <div style="margin-top:18px;">
-          <h3 style="margin-bottom:10px;">Task History</h3>
-          <div class="history-list" id="taskHistory"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="adWindow" class="window" style="width:700px;height:520px;left:260px;top:110px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'adWindow')">
-        <div class="title-left"><span>Ad Section</span></div>
-        <div class="title-actions"><button onclick="minimizeWindow('adWindow')">—</button><button onclick="closeWindow('adWindow')">✕</button></div>
-      </div>
-      <div class="window-body pane">
-        <div class="card-grid">
-          <div class="card">
-            <h3>Adsterra Banner Zone</h3>
-            <div class="ad-box" id="adsterra-banner-slot">
-              Adsterra banner code এখানে বসাবে
+      <div class="view" id="adminView">
+        <div class="card">
+          <h2 style="margin-top:0;">Admin Panel</h2>
+          <div class="form-grid">
+            <div>
+              <label>Game Firebase ID</label>
+              <input type="text" id="gameId" placeholder="edit mode হলে auto fill হবে" />
+            </div>
+            <div>
+              <label>Game Title</label>
+              <input type="text" id="title" placeholder="Pokemon Fire Red" />
+            </div>
+            <div>
+              <label>Game Core</label>
+              <select id="core">
+                <option value="gba">gba</option>
+                <option value="gb">gb</option>
+                <option value="gbc">gbc</option>
+                <option value="nes">nes</option>
+                <option value="snes">snes</option>
+                <option value="n64">n64</option>
+                <option value="nds">nds</option>
+                <option value="psx">psx</option>
+                <option value="segaMD">segaMD</option>
+              </select>
+            </div>
+            <div>
+              <label>Cost (points)</label>
+              <input type="number" id="cost" value="5" />
+            </div>
+            <div>
+              <label>Session Seconds</label>
+              <input type="number" id="sessionSeconds" value="600" />
+            </div>
+            <div>
+              <label>Active</label>
+              <select id="active">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+            <div class="full">
+              <label>Game File URL / GitHub Raw Path</label>
+              <input type="text" id="fileUrl" placeholder="https://raw.githubusercontent.com/swampodsarkar/MY-EMU-MAN/main/pokemon.gba" />
+            </div>
+            <div class="full">
+              <label>BIOS URL</label>
+              <input type="text" id="biosUrl" placeholder="https://raw.githubusercontent.com/swampodsarkar/MY-EMU-MAN/main/gba_bios.bin" />
+            </div>
+            <div class="full">
+              <label>Cover Image Link</label>
+              <input type="text" id="cover" placeholder="https://i.ibb.co/xxxxx/cover.jpg" oninput="updatePreview()" />
+            </div>
+            <div class="full">
+              <label>Description</label>
+              <textarea id="description" placeholder="Short game description"></textarea>
             </div>
           </div>
-          <div class="card">
-            <h3>Rewarded Demo</h3>
-            <p class="muted">Manual reward system ready.</p>
-            <button class="action-btn success" onclick="completeTask('Rewarded ad completed', 3)">Watch Rewarded +3</button>
+
+          <div class="preview-box" id="previewBox">
+            <span style="opacity:.7;">Cover preview</span>
           </div>
-          <div class="card">
-            <h3>Adsterra Direct Link</h3>
-            <div class="ad-box">
-              <a id="adsterraDirectLink" href="#" target="_blank" style="color:#fff;text-decoration:none;">
-                Open Sponsored Link
-              </a>
-            </div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn blue" onclick="addGame()">Add New Game</button>
+            <button class="btn green" onclick="updateGame()">Update Game</button>
+            <button class="btn yellow" onclick="fillSample()">Sample Fill</button>
+            <button class="btn" onclick="clearForm()">Clear</button>
+            <button class="btn" onclick="loadGames()">Refresh Games</button>
+          </div>
+
+          <div class="small" id="adminStatus" style="margin-top:12px;">Ready.</div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin-top:0;">All Games</h2>
+          <div id="adminGamesList" class="games-grid">
+            <div class="muted">Loading games...</div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div id="rewardWindow" class="window" style="width:680px;height:480px;left:250px;top:110px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'rewardWindow')">
-        <div class="title-left"><span>Reward Center</span></div>
-        <div class="title-actions"><button onclick="minimizeWindow('rewardWindow')">—</button><button onclick="closeWindow('rewardWindow')">✕</button></div>
-      </div>
-      <div class="window-body pane">
-        <div class="card-grid">
-          <div class="card"><h3>Quick Ad Reward</h3><p class="muted">Earn 3 points instantly.</p><button class="action-btn success" onclick="watchAd()">Watch Ad +3</button></div>
-          <div class="card"><h3>Daily Reward</h3><p class="muted">Claim once and receive 5 points.</p><button class="action-btn primary" onclick="claimDaily()">Claim +5</button></div>
-        </div>
-        <div style="margin-top:18px;"><h3 style="margin-bottom:10px;">Reward History</h3><div class="history-list" id="rewardHistory"></div></div>
-      </div>
-    </div>
-
-    <div id="walletWindow" class="window" style="width:760px;height:540px;left:280px;top:100px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'walletWindow')">
-        <div class="title-left"><span>Wallet App</span></div>
-        <div class="title-actions"><button onclick="minimizeWindow('walletWindow')">—</button><button onclick="closeWindow('walletWindow')">✕</button></div>
-      </div>
-      <div class="window-body pane">
-        <div class="card-grid">
-          <div class="card"><div class="muted">Current Balance</div><div class="wallet-stat" id="walletCoins">15</div><div class="muted">Points available for gameplay</div></div>
-          <div class="card"><div class="muted">Selected Game Cost</div><div class="wallet-stat" id="selectedGameCost">5</div><div class="muted">Points deducted for one session</div></div>
-          <div class="card"><div class="muted">Today Earned</div><div class="wallet-stat" id="walletEarned">0</div><div class="muted">Total earned today</div></div>
-        </div>
-        <div style="margin-top:18px;">
-          <h3 style="margin-bottom:10px;">Wallet History</h3>
-          <div class="history-list" id="walletHistory"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="settingsWindow" class="window" style="width:640px;height:520px;left:320px;top:90px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'settingsWindow')">
-        <div class="title-left"><span>Settings</span></div>
-        <div class="title-actions"><button onclick="minimizeWindow('settingsWindow')">—</button><button onclick="closeWindow('settingsWindow')">✕</button></div>
-      </div>
-      <div class="window-body pane">
-        <div class="settings-row"><div><strong>Light Mode</strong><div class="muted">Switch desktop theme</div></div><div class="toggle" id="themeToggle" onclick="toggleTheme(this)"></div></div>
-        <div class="settings-row"><div><strong>Sound</strong><div class="muted">Enable system sound preference</div></div><div class="toggle on" onclick="toggleSwitch(this)"></div></div>
-        <div class="settings-row"><div><strong>Window Animations</strong><div class="muted">Smooth motion enabled</div></div><div class="toggle on" onclick="toggleSwitch(this)"></div></div>
-      </div>
-    </div>
-
-    <div class="taskbar">
-      <div class="taskbar-left"><button class="start-btn" onclick="toggleStartMenu()">Start</button></div>
-      <div class="taskbar-center">
-        <button class="tb-app active-app" id="app-emulator" onclick="openApp('emuWindow', 'app-emulator')">Games</button>
-        <button class="tb-app" id="app-tasks" onclick="openApp('taskWindow', 'app-tasks')">Tasks</button>
-        <button class="tb-app" id="app-ads" onclick="openApp('adWindow', 'app-ads')">Ads</button>
-        <button class="tb-app" id="app-wallet" onclick="openApp('walletWindow', 'app-wallet')">Wallet</button>
-        <button class="tb-app" id="app-rewards" onclick="openApp('rewardWindow', 'app-rewards')">Rewards</button>
-      </div>
-      <div class="taskbar-right"><button class="reward-btn" onclick="watchAd()">+3 pts</button><div class="clock" id="clock">00:00</div></div>
     </div>
   </div>
 
@@ -801,6 +583,7 @@
       get,
       set,
       update,
+      remove,
       push,
       onValue
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -819,18 +602,18 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    const $ = (id) => document.getElementById(id);
+
     let coins = 15;
     let sessionSeconds = 0;
     let sessionInterval = null;
     let isRunning = false;
-    let gameBooted = false;
     let dailyClaimed = false;
     let tasksCompleted = 0;
     let todayEarned = 0;
     let playSessions = 0;
     let currentGame = null;
     let gamesMap = {};
-    let emuLoaderReady = false;
 
     const rewardLogs = [];
     const walletLogs = [];
@@ -842,85 +625,82 @@
       localStorage.setItem("srs_user_id", currentUserId);
     }
 
-    function nowTime() {
-      const d = new Date();
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
     function showToast(msg) {
-      const stack = document.getElementById('toastStack');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
+      const stack = $("toastStack");
+      const toast = document.createElement("div");
+      toast.className = "toast";
       toast.textContent = msg;
       stack.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-5px)';
-      }, 2200);
-      setTimeout(() => toast.remove(), 2600);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    function nowTime() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function updateClock() {
+      const d = new Date();
+      $("clock").textContent = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     }
 
     function updateCoinsUI() {
-      document.getElementById('coinCount').textContent = coins;
-      document.getElementById('walletCoins').textContent = coins;
-      document.getElementById('taskWalletStat').textContent = coins;
+      $("coinCount").textContent = coins;
+      $("walletCoins").textContent = coins;
+      $("taskWalletStat").textContent = coins;
     }
 
     function updateStatsUI() {
-      document.getElementById('tasksCompletedStat').textContent = tasksCompleted;
-      document.getElementById('todayEarnedStat').textContent = todayEarned;
-      document.getElementById('playSessionsStat').textContent = playSessions;
-      document.getElementById('walletEarned').textContent = todayEarned;
+      $("tasksCompletedStat").textContent = tasksCompleted;
+      $("todayEarnedStat").textContent = todayEarned;
+      $("playSessionsStat").textContent = playSessions;
+      $("walletEarned").textContent = todayEarned;
     }
 
     function setStatus(text) {
-      document.getElementById('statusText').textContent = text;
+      $("statusText").textContent = text;
     }
 
     function formatTime(sec) {
-      const m = String(Math.floor(sec / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
-      return m + ':' + s;
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
+      return `${m}:${s}`;
     }
 
     function updateSessionTime() {
-      document.getElementById('sessionTime').textContent = formatTime(sessionSeconds);
-    }
-
-    function pushRewardLog(text) {
-      rewardLogs.unshift({ text, time: nowTime() });
-      renderRewardHistory();
-    }
-
-    function pushWalletLog(text, amountText) {
-      walletLogs.unshift({ text, amountText, time: nowTime() });
-      renderWalletHistory();
-    }
-
-    function pushTaskLog(text, amountText) {
-      taskLogs.unshift({ text, amountText, time: nowTime() });
-      renderTaskHistory();
-    }
-
-    function renderRewardHistory() {
-      const box = document.getElementById('rewardHistory');
-      box.innerHTML = rewardLogs.length ? rewardLogs.map(item => `
-        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div class="muted">Reward</div></div>
-      `).join('') : `<div class="muted">No rewards claimed yet.</div>`;
-    }
-
-    function renderWalletHistory() {
-      const box = document.getElementById('walletHistory');
-      box.innerHTML = walletLogs.length ? walletLogs.map(item => `
-        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div>${item.amountText}</div></div>
-      `).join('') : `<div class="muted">No wallet history yet.</div>`;
+      $("sessionTime").textContent = formatTime(sessionSeconds);
     }
 
     function renderTaskHistory() {
-      const box = document.getElementById('taskHistory');
-      box.innerHTML = taskLogs.length ? taskLogs.map(item => `
-        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div>${item.amountText}</div></div>
-      `).join('') : `<div class="muted">No tasks completed yet.</div>`;
+      $("taskHistory").innerHTML = taskLogs.length
+        ? taskLogs.map(item => `
+          <div class="list-item">
+            <div><strong>${item.text}</strong><br><span class="small">${item.time}</span></div>
+            <div>${item.amount}</div>
+          </div>
+        `).join("")
+        : `<div class="muted">No task history yet.</div>`;
+    }
+
+    function renderWalletHistory() {
+      $("walletHistory").innerHTML = walletLogs.length
+        ? walletLogs.map(item => `
+          <div class="list-item">
+            <div><strong>${item.text}</strong><br><span class="small">${item.time}</span></div>
+            <div>${item.amount}</div>
+          </div>
+        `).join("")
+        : `<div class="muted">No wallet history yet.</div>`;
+    }
+
+    function pushTaskLog(text, amount) {
+      taskLogs.unshift({ text, amount, time: nowTime() });
+      renderTaskHistory();
+    }
+
+    function pushWalletLog(text, amount) {
+      walletLogs.unshift({ text, amount, time: nowTime() });
+      renderWalletHistory();
     }
 
     async function saveUserState() {
@@ -935,20 +715,17 @@
           updatedAt: Date.now()
         });
       } catch (e) {
-        console.error("saveUserState error:", e);
+        console.error(e);
       }
     }
 
     async function addWalletHistory(type, text, amount) {
       try {
         await push(ref(db, `walletHistory/${currentUserId}`), {
-          type,
-          text,
-          amount,
-          time: Date.now()
+          type, text, amount, time: Date.now()
         });
       } catch (e) {
-        console.error("addWalletHistory error:", e);
+        console.error(e);
       }
     }
 
@@ -978,44 +755,101 @@
         updateCoinsUI();
         updateStatsUI();
       } catch (e) {
-        console.error("loadUserState error:", e);
-        showToast("Firebase permission error. Rules publish korte hobe.");
+        console.error(e);
+        showToast("Firebase permission error. Rules publish koro.");
       }
     }
 
-    function renderGameLibrary(games) {
-      const wrap = document.getElementById("gameLibrary");
-      const entries = Object.entries(games || {}).filter(([_, g]) => g && g.active !== false);
+    function unlockGameView() {
+      $("gameLock").classList.add("hidden");
+    }
 
+    function lockGameView() {
+      $("gameLock").classList.remove("hidden");
+    }
+
+    function destroyOldEmulator() {
+      $("game").innerHTML = "";
+      try { window.EJS_emulator = null; } catch (e) {}
+      const oldScript = document.getElementById("emuLoaderScript");
+      if (oldScript) oldScript.remove();
+    }
+
+    function loadEmulator(game) {
+      destroyOldEmulator();
+
+      window.EJS_player = "#game";
+      window.EJS_core = game.core || "gba";
+      window.EJS_gameName = game.title || "Game";
+      window.EJS_color = "#0064ff";
+      window.EJS_startOnLoaded = true;
+      window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_gameUrl = game.fileUrl;
+      window.EJS_biosUrl = game.biosUrl || "";
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
+      script.id = "emuLoaderScript";
+      document.body.appendChild(script);
+    }
+
+    function renderPlayerGames(games) {
+      const entries = Object.entries(games || {}).filter(([_, g]) => g && g.active !== false);
       if (!entries.length) {
-        wrap.innerHTML = `<div class="muted">No games found in Firebase.</div>`;
+        $("gameLibrary").innerHTML = `<div class="muted">No games found.</div>`;
+        $("adminGamesList").innerHTML = `<div class="muted">No games found.</div>`;
         return;
       }
 
       gamesMap = {};
-      wrap.innerHTML = entries.map(([id, game]) => {
+      $("gameLibrary").innerHTML = entries.map(([id, game]) => {
         gamesMap[id] = game;
         return `
-          <div class="card">
-            <div class="game-card-thumb">
-              ${game.cover ? `<img src="${game.cover}" alt="${game.title}">` : `🎮`}
+          <div class="game-card">
+            <div class="game-thumb">
+              ${game.cover ? `<img src="${game.cover}" alt="${game.title}">` : "🎮"}
             </div>
-            <h3 style="margin:0 0 8px;">${game.title || "Untitled Game"}</h3>
-            <p class="muted" style="margin:0 0 8px;">Core: ${game.core || "gba"}</p>
-            <p class="muted" style="margin:0 0 10px;">Cost: ${game.cost || 5} pts</p>
-            <button class="action-btn primary" onclick="window.selectGameFromUI('${id}')">Select</button>
+            <div class="game-body">
+              <h3 style="margin:0 0 8px;">${game.title || "Untitled"}</h3>
+              <div class="small">Core: ${game.core || "gba"}</div>
+              <div class="small">Cost: ${game.cost || 5} pts</div>
+              <div class="small" style="margin:6px 0 12px;">${game.description || ""}</div>
+              <button class="btn blue" onclick="selectGameFromUI('${id}')">Select</button>
+            </div>
           </div>
         `;
       }).join("");
+
+      const adminEntries = Object.entries(games || {}).reverse();
+      $("adminGamesList").innerHTML = adminEntries.map(([id, g]) => `
+        <div class="game-card">
+          <div class="game-thumb">
+            ${g.cover ? `<img src="${g.cover}" alt="${g.title}" onerror="this.parentNode.innerHTML='🎮'">` : "🎮"}
+          </div>
+          <div class="game-body">
+            <h3 style="margin:0 0 10px;">${g.title || "Untitled"}</h3>
+            <div class="badge">${g.core || "gba"}</div>
+            <div class="badge">${g.cost ?? 5} pts</div>
+            <div class="badge">${g.sessionSeconds ?? 600}s</div>
+            <div class="badge">${g.active === false ? "inactive" : "active"}</div>
+            <p class="small"><strong>ID:</strong> ${id}</p>
+            <p class="small"><strong>Game Path:</strong> ${g.fileUrl || ""}</p>
+            <div class="row" style="margin-top:10px;">
+              <button class="btn green" onclick="editGame('${id}')">Edit</button>
+              <button class="btn red" onclick="deleteGame('${id}')">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
     }
 
     async function loadGames() {
       try {
         onValue(ref(db, "games"), (snap) => {
-          renderGameLibrary(snap.val() || {});
+          renderPlayerGames(snap.val() || {});
         });
       } catch (e) {
-        console.error("loadGames error:", e);
+        console.error(e);
       }
     }
 
@@ -1023,53 +857,17 @@
       const game = gamesMap[gameId];
       if (!game) return;
       currentGame = { ...game, id: gameId };
-      document.getElementById("currentGameName").textContent = game.title || "Unknown";
-      document.getElementById("selectedGameCost").textContent = game.cost || 5;
+      $("currentGameName").textContent = game.title || "Unknown";
+      $("selectedGameCost").textContent = game.cost || 5;
       saveUserState();
       showToast(`${game.title} selected`);
     }
 
-    function unlockGameView() {
-      document.getElementById('gameLock').classList.add('hidden');
-    }
+    window.selectGameFromUI = function(gameId) {
+      selectGame(gameId);
+    };
 
-    function lockGameView() {
-      document.getElementById('gameLock').classList.remove('hidden');
-    }
-
-    function destroyOldEmulator() {
-      const gameBox = document.getElementById("game");
-      gameBox.innerHTML = "";
-      if (window.EJS_emulator) {
-        try { window.EJS_emulator = null; } catch (e) {}
-      }
-    }
-
-    function loadEmulator(game) {
-      destroyOldEmulator();
-
-      window.EJS_player = '#game';
-      window.EJS_core = game.core || 'gba';
-      window.EJS_gameName = game.title || 'Game';
-      window.EJS_color = '#0064ff';
-      window.EJS_startOnLoaded = true;
-      window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-      window.EJS_gameUrl = game.fileUrl;
-      window.EJS_biosUrl = game.biosUrl || '';
-
-      const oldScript = document.getElementById("emuLoaderScript");
-      if (oldScript) oldScript.remove();
-
-      const script = document.createElement("script");
-      script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
-      script.id = "emuLoaderScript";
-      script.onload = () => {
-        emuLoaderReady = true;
-      };
-      document.body.appendChild(script);
-    }
-
-    function addPoints(reason, amount) {
+    async function addPoints(reason, amount) {
       coins += amount;
       todayEarned += amount;
       tasksCompleted += 1;
@@ -1077,32 +875,46 @@
       updateStatsUI();
       pushTaskLog(reason, `+${amount}`);
       pushWalletLog(reason, `+${amount}`);
-      pushRewardLog(reason);
-      addWalletHistory("reward", reason, amount);
-      saveUserState();
-      showToast(`${reason}. +${amount} points added.`);
+      await addWalletHistory("reward", reason, amount);
+      await saveUserState();
+      showToast(`${reason}. +${amount} pts`);
     }
 
-    window.selectGameFromUI = function(gameId) {
-      selectGame(gameId);
+    window.completeTask = function(reason, amount) {
+      addPoints(reason, amount);
+    };
+
+    window.claimDaily = function() {
+      if (dailyClaimed) {
+        showToast("Daily reward already claimed.");
+        return;
+      }
+      dailyClaimed = true;
+      coins += 5;
+      todayEarned += 5;
+      updateCoinsUI();
+      updateStatsUI();
+      pushTaskLog("Daily reward claimed", "+5");
+      pushWalletLog("Daily reward", "+5");
+      addWalletHistory("daily", "Daily reward", 5);
+      saveUserState();
+      showToast("Daily reward claimed. +5 pts");
     };
 
     window.startGame = async function() {
-      openApp('emuWindow', 'app-emulator');
-
       if (!currentGame) {
-        showToast('Please select a game first.');
+        showToast("Please select a game first.");
         return;
       }
 
       if (isRunning) {
-        showToast('A session is already running.');
+        showToast("A session is already running.");
         return;
       }
 
       const cost = currentGame.cost || 5;
       if (coins < cost) {
-        showToast('Not enough points.');
+        showToast("Not enough points.");
         return;
       }
 
@@ -1116,12 +928,11 @@
       sessionSeconds = currentGame.sessionSeconds || 600;
       updateSessionTime();
       isRunning = true;
-      setStatus('Running');
+      setStatus("Running");
       unlockGameView();
-
       loadEmulator(currentGame);
-      showToast(`Game started: ${currentGame.title}`);
       await saveUserState();
+      showToast(`Game started: ${currentGame.title}`);
 
       sessionInterval = setInterval(async () => {
         sessionSeconds--;
@@ -1138,168 +949,190 @@
       isRunning = false;
       sessionSeconds = 0;
       updateSessionTime();
-      setStatus('Locked');
+      setStatus("Locked");
       lockGameView();
-      showToast(auto ? 'Session ended. Play again with points.' : 'Session ended.');
+      showToast(auto ? "Session ended." : "Session stopped.");
       await saveUserState();
     };
 
-    window.completeTask = function(reason, amount) {
-      addPoints(reason, amount);
+    window.switchView = function(viewId, btn) {
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+      if (btn) btn.classList.add("active");
     };
 
-    window.watchAd = function() {
-      addPoints('Reward ad watched', 3);
-    };
+    function slugify(text) {
+      return String(text || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
 
-    window.claimDaily = function() {
-      if (dailyClaimed) {
-        showToast('Daily reward already claimed.');
+    function setAdminStatus(msg, isError = false) {
+      $("adminStatus").textContent = msg;
+      $("adminStatus").style.color = isError ? "#ffb4b4" : "#d6e5ff";
+    }
+
+    function getFormData() {
+      return {
+        title: $("title").value.trim(),
+        core: $("core").value,
+        cost: Number($("cost").value || 5),
+        sessionSeconds: Number($("sessionSeconds").value || 600),
+        fileUrl: $("fileUrl").value.trim(),
+        biosUrl: $("biosUrl").value.trim(),
+        cover: $("cover").value.trim(),
+        description: $("description").value.trim(),
+        active: $("active").value === "true"
+      };
+    }
+
+    function validate(data) {
+      if (!data.title) return "Game title required";
+      if (!data.fileUrl) return "Game file URL required";
+      if (!data.core) return "Game core required";
+      return "";
+    }
+
+    window.updatePreview = function() {
+      const url = $("cover").value.trim();
+      const box = $("previewBox");
+      if (!url) {
+        box.innerHTML = `<span style="opacity:.7;">Cover preview</span>`;
         return;
       }
-      dailyClaimed = true;
-      coins += 5;
-      todayEarned += 5;
-      updateCoinsUI();
-      updateStatsUI();
-      pushRewardLog('Daily reward claimed');
-      pushWalletLog('Daily reward', '+5');
-      addWalletHistory("daily", "Daily reward", 5);
-      saveUserState();
-      showToast('Daily reward claimed. +5 points added.');
+      box.innerHTML = `<img src="${url}" alt="Cover Preview" onerror="this.parentNode.innerHTML='<span style=&quot;opacity:.7;&quot;>Image load failed</span>'">`;
     };
 
-    window.openApp = function(id, taskId) {
-      const win = document.getElementById(id);
-      win.classList.add('active');
-      bringToFront(win);
-      markTaskbar(taskId);
+    window.clearForm = function() {
+      $("gameId").value = "";
+      $("title").value = "";
+      $("core").value = "gba";
+      $("cost").value = "5";
+      $("sessionSeconds").value = "600";
+      $("fileUrl").value = "";
+      $("biosUrl").value = "";
+      $("cover").value = "";
+      $("description").value = "";
+      $("active").value = "true";
+      updatePreview();
+      setAdminStatus("Form cleared.");
     };
 
-    window.closeWindow = function(id) {
-      document.getElementById(id).classList.remove('active');
+    window.fillSample = function() {
+      $("title").value = "Pokemon Fire Red";
+      $("core").value = "gba";
+      $("cost").value = "5";
+      $("sessionSeconds").value = "600";
+      $("fileUrl").value = "https://raw.githubusercontent.com/swampodsarkar/MY-EMU-MAN/main/pokemon.gba";
+      $("biosUrl").value = "https://raw.githubusercontent.com/swampodsarkar/MY-EMU-MAN/main/gba_bios.bin";
+      $("cover").value = "https://i.ibb.co/8gZ1J0s/game-cover.jpg";
+      $("description").value = "Popular GBA game";
+      $("active").value = "true";
+      updatePreview();
+      setAdminStatus("Sample filled.");
     };
 
-    window.minimizeWindow = function(id) {
-      document.getElementById(id).classList.remove('active');
-    };
+    window.addGame = async function() {
+      const data = getFormData();
+      const error = validate(data);
+      if (error) return setAdminStatus(error, true);
 
-    function bringToFront(el) {
-      const all = document.querySelectorAll('.window');
-      let z = 100;
-      all.forEach(w => { w.style.zIndex = z; z++; });
-      el.style.zIndex = 999;
-    }
+      const customId = $("gameId").value.trim();
+      const gameId = customId || ("game_" + slugify(data.title) + "_" + Date.now());
 
-    function markTaskbar(taskId) {
-      document.querySelectorAll('.tb-app').forEach(btn => btn.classList.remove('active-app'));
-      if (taskId) {
-        const el = document.getElementById(taskId);
-        if (el) el.classList.add('active-app');
-      }
-    }
-
-    window.toggleStartMenu = function() {
-      document.getElementById('startMenu').classList.toggle('active');
-    };
-
-    window.closeStartMenu = function() {
-      document.getElementById('startMenu').classList.remove('active');
-    };
-
-    window.filterMenu = function(value) {
-      value = value.toLowerCase().trim();
-      document.querySelectorAll('#menuGrid .menu-card').forEach(card => {
-        card.style.display = card.dataset.name.includes(value) ? '' : 'none';
-      });
-    };
-
-    window.toggleMaximize = function(id) {
-      const win = document.getElementById(id);
-      if (win.dataset.max === '1') {
-        win.style.top = win.dataset.prevTop;
-        win.style.left = win.dataset.prevLeft;
-        win.style.width = win.dataset.prevWidth;
-        win.style.height = win.dataset.prevHeight;
-        win.dataset.max = '0';
-      } else {
-        win.dataset.prevTop = win.style.top || '100px';
-        win.dataset.prevLeft = win.style.left || '180px';
-        win.dataset.prevWidth = win.style.width || '920px';
-        win.dataset.prevHeight = win.style.height || '580px';
-        win.style.top = '10px';
-        win.style.left = '10px';
-        win.style.width = 'calc(100% - 20px)';
-        win.style.height = 'calc(100% - 88px)';
-        win.dataset.max = '1';
+      try {
+        await set(ref(db, "games/" + gameId), {
+          ...data,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
+        $("gameId").value = gameId;
+        setAdminStatus("Game added successfully.");
+        showToast("Game added.");
+      } catch (err) {
+        console.error(err);
+        setAdminStatus("Add failed: " + err.message, true);
       }
     };
 
-    let dragData = null;
-    window.dragStart = function(e, id) {
-      if (e.target.tagName === 'BUTTON') return;
-      const win = document.getElementById(id);
-      bringToFront(win);
-      dragData = { el: win, startX: e.clientX, startY: e.clientY, left: win.offsetLeft, top: win.offsetTop };
-      document.addEventListener('mousemove', dragging);
-      document.addEventListener('mouseup', dragEnd);
+    window.updateGame = async function() {
+      const gameId = $("gameId").value.trim();
+      if (!gameId) return setAdminStatus("Game ID required for update.", true);
+
+      const data = getFormData();
+      const error = validate(data);
+      if (error) return setAdminStatus(error, true);
+
+      try {
+        await update(ref(db, "games/" + gameId), {
+          ...data,
+          updatedAt: Date.now()
+        });
+        setAdminStatus("Game updated successfully.");
+        showToast("Game updated.");
+      } catch (err) {
+        console.error(err);
+        setAdminStatus("Update failed: " + err.message, true);
+      }
     };
 
-    function dragging(e) {
-      if (!dragData) return;
-      if (dragData.el.dataset.max === '1') return;
-      const dx = e.clientX - dragData.startX;
-      const dy = e.clientY - dragData.startY;
-      dragData.el.style.left = dragData.left + dx + 'px';
-      dragData.el.style.top = dragData.top + dy + 'px';
-    }
+    window.editGame = async function(gameId) {
+      try {
+        const snap = await get(ref(db, "games/" + gameId));
+        if (!snap.exists()) return setAdminStatus("Game not found.", true);
 
-    function dragEnd() {
-      document.removeEventListener('mousemove', dragging);
-      document.removeEventListener('mouseup', dragEnd);
-      dragData = null;
-    }
-
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('clock').textContent = h + ':' + m;
-    }
-
-    window.toggleSwitch = function(el) {
-      el.classList.toggle('on');
+        const g = snap.val();
+        $("gameId").value = gameId;
+        $("title").value = g.title || "";
+        $("core").value = g.core || "gba";
+        $("cost").value = g.cost ?? 5;
+        $("sessionSeconds").value = g.sessionSeconds ?? 600;
+        $("fileUrl").value = g.fileUrl || "";
+        $("biosUrl").value = g.biosUrl || "";
+        $("cover").value = g.cover || "";
+        $("description").value = g.description || "";
+        $("active").value = String(g.active !== false);
+        updatePreview();
+        switchView("adminView", document.querySelector('.side-btn[data-view="adminView"]'));
+        setAdminStatus("Game loaded into form.");
+      } catch (err) {
+        console.error(err);
+        setAdminStatus("Edit load failed.", true);
+      }
     };
 
-    window.toggleTheme = function(el) {
-      el.classList.toggle('on');
-      document.body.classList.toggle('light');
-      showToast(document.body.classList.contains('light') ? 'Light mode enabled' : 'Dark mode enabled');
+    window.deleteGame = async function(gameId) {
+      if (!confirm("Delete this game?")) return;
+      try {
+        await remove(ref(db, "games/" + gameId));
+        setAdminStatus("Game deleted.");
+        showToast("Game deleted.");
+      } catch (err) {
+        console.error(err);
+        setAdminStatus("Delete failed: " + err.message, true);
+      }
     };
 
-    document.getElementById("adsterraDirectLink").href = "https://www.profitableratecpm.com/REPLACE_WITH_YOUR_LINK";
+    $("adsterraDirectLink").href = "https://www.profitableratecpm.com/REPLACE_WITH_YOUR_LINK";
 
     updateCoinsUI();
     updateStatsUI();
     updateSessionTime();
-    renderRewardHistory();
-    renderWalletHistory();
     renderTaskHistory();
+    renderWalletHistory();
     updateClock();
     setInterval(updateClock, 1000);
-    setStatus('Locked');
+    setStatus("Locked");
     lockGameView();
-
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.start-btn') && !e.target.closest('.start-menu')) closeStartMenu();
-    });
 
     await loadUserState();
     await loadGames();
   </script>
 
-  <!-- Adsterra code example -->
-  <!--
+  <!-- Adsterra example
   <script type="text/javascript">
     atOptions = {
       'key' : 'YOUR_ADSTERRA_KEY',
