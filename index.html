@@ -2,46 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Chat Wave OS — Professional Desktop Environment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Wave OS</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-    }
-
-    /* Modern root styling */
-    :root {
-      --glass-bg: rgba(18, 25, 45, 0.72);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --accent: #3b82f6;
-      --accent-glow: #2563eb;
-      --taskbar-blur: 24px;
-      --shadow-elevation: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
-    }
-
+    * { box-sizing: border-box; user-select: none; }
     html, body {
+      margin: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', sans-serif;
-      background: #0b1120;
+      font-family: Arial, sans-serif;
+      background: #07111f;
     }
 
-    /* premium animated gradient background */
+    :root {
+      --glass: rgba(255,255,255,0.10);
+      --glass-2: rgba(255,255,255,0.14);
+      --border: rgba(255,255,255,0.14);
+      --panel: rgba(11, 20, 35, 0.82);
+      --panel-2: rgba(11, 20, 35, 0.92);
+      --text: #f4f8ff;
+      --muted: #bfd0ea;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --yellow: #f59e0b;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    body.light {
+      --glass: rgba(255,255,255,0.55);
+      --glass-2: rgba(255,255,255,0.72);
+      --border: rgba(100,120,170,0.20);
+      --panel: rgba(245,249,255,0.78);
+      --panel-2: rgba(255,255,255,0.92);
+      --text: #10223f;
+      --muted: #516986;
+      --blue: #2563eb;
+      --green: #15803d;
+      --red: #dc2626;
+      --yellow: #d97706;
+      --shadow: 0 20px 60px rgba(20,40,80,0.15);
+    }
+
     body {
-      background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
-      position: relative;
-    }
-
-    body::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 80% 20%, rgba(59,130,246,0.18), transparent 55%);
-      pointer-events: none;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 20%),
+        radial-gradient(circle at bottom left, rgba(96,165,250,0.18), transparent 24%),
+        linear-gradient(135deg, #08111e 0%, #102341 40%, #14305d 100%);
+      color: var(--text);
     }
 
     .desktop {
@@ -51,625 +60,1339 @@
       overflow: hidden;
     }
 
-    /* refined wallpaper overlay */
     .wallpaper-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 40% 50%, rgba(255,255,245,0.04) 0%, transparent 70%);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.10), transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(255,255,255,0.08), transparent 18%),
+        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.06), transparent 18%);
       pointer-events: none;
     }
 
-    /* ----- Desktop Icons (modern) ----- */
     .desktop-icons {
       position: absolute;
-      top: 24px;
-      left: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      z-index: 20;
+      top: 22px;
+      left: 22px;
+      display: grid;
+      grid-template-columns: repeat(2, 92px);
+      gap: 18px 16px;
+      z-index: 5;
     }
 
     .icon {
       width: 92px;
       text-align: center;
-      color: #f1f5f9;
+      color: var(--text);
       cursor: pointer;
       font-size: 12px;
-      font-weight: 500;
-      transition: transform 0.2s ease, filter 0.2s;
-      backdrop-filter: blur(2px);
-    }
-
-    .icon:hover {
-      transform: translateY(-3px);
-      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
     }
 
     .icon-box {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 10px;
-      border-radius: 20px;
-      background: rgba(25, 35, 60, 0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.2);
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 8px;
+      border-radius: 18px;
+      background: var(--glass);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, background .18s ease;
     }
 
     .icon:hover .icon-box {
-      background: rgba(59,130,246,0.5);
-      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px) scale(1.03);
+      background: var(--glass-2);
     }
 
-    /* ----- Taskbar (macOS/win11 hybrid) ----- */
+    .icon svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.9; }
+    body.light .icon svg { stroke: #1f4dbf; }
+
     .taskbar {
       position: absolute;
-      bottom: 16px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      width: calc(100% - 32px);
-      max-width: 1280px;
-      height: 68px;
-      background: rgba(12, 20, 35, 0.75);
-      backdrop-filter: blur(20px);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.15);
+      width: calc(100% - 24px);
+      max-width: 1320px;
+      height: 64px;
+      border-radius: 18px;
+      background: var(--panel);
+      backdrop-filter: blur(16px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      z-index: 1000;
-      box-shadow: var(--shadow-elevation);
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      z-index: 3000;
+      box-shadow: var(--shadow);
     }
 
     .taskbar-left, .taskbar-center, .taskbar-right {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    /* SVG icon button base */
-    .icon-btn {
-      background: rgba(255,255,255,0.08);
-      border: none;
-      height: 46px;
-      padding: 0 18px;
-      border-radius: 26px;
-      display: flex;
-      align-items: center;
       gap: 10px;
-      color: #eef2ff;
-      font-weight: 500;
-      font-size: 14px;
+    }
+
+    .start-btn, .tb-app, .reward-btn {
+      height: 42px;
+      min-width: 42px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.10);
+      color: var(--text);
       cursor: pointer;
-      transition: all 0.2s;
-      backdrop-filter: blur(4px);
+      padding: 0 14px;
+      font-size: 14px;
+      transition: background .18s ease, border-color .18s ease;
     }
 
-    .icon-btn svg {
-      width: 20px;
-      height: 20px;
-      stroke: white;
-      stroke-width: 1.7;
-      fill: none;
+    .start-btn:hover, .tb-app:hover, .reward-btn:hover, .menu-card:hover, .action-btn:hover {
+      background: rgba(255,255,255,0.18);
+      border-color: var(--border);
     }
 
-    .icon-btn:hover {
-      background: rgba(59,130,246,0.45);
-      transform: scale(0.97);
-    }
-
-    .start-btn {
-      background: var(--accent);
-      box-shadow: 0 4px 12px rgba(59,130,246,0.3);
-    }
-
-    .start-btn:hover {
-      background: #2563eb;
-      transform: scale(0.98);
+    .tb-app.active-app {
+      background: rgba(37,99,235,0.26);
+      border-color: rgba(96,165,250,0.38);
     }
 
     .clock {
       font-size: 14px;
-      font-weight: 500;
-      background: rgba(0,0,0,0.3);
-      padding: 8px 14px;
-      border-radius: 32px;
-      letter-spacing: 0.5px;
+      color: var(--text);
     }
 
-    /* Windows styling (frosted glass) */
     .window {
       position: absolute;
-      top: 80px;
+      top: 100px;
       left: 180px;
-      width: 960px;
-      height: 620px;
-      background: rgba(15, 25, 45, 0.92);
-      backdrop-filter: blur(18px);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 30px 50px rgba(0,0,0,0.5);
-      display: none;
-      z-index: 50;
+      width: 920px;
+      height: 580px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       overflow: hidden;
-      transition: all 0.1s ease;
+      display: none;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: popin .18s ease;
     }
 
-    .window.active {
-      display: flex;
-      flex-direction: column;
+    @keyframes popin {
+      from { transform: scale(.985); opacity: .65; }
+      to { transform: scale(1); opacity: 1; }
     }
+
+    .window.active { display: block; }
 
     .titlebar {
-      height: 56px;
-      background: rgba(30, 40, 60, 0.6);
-      backdrop-filter: blur(8px);
+      height: 52px;
+      background: rgba(255,255,255,0.05);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
-      cursor: grab;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .titlebar:active {
-      cursor: grabbing;
+      padding: 0 14px;
+      cursor: move;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .title-left {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-weight: 600;
+      gap: 10px;
       font-size: 15px;
-      color: #f0f4fe;
+      font-weight: 600;
+    }
+
+    .title-left svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
     .title-actions {
       display: flex;
-      gap: 12px;
+      gap: 8px;
     }
 
     .title-actions button {
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.08);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       border: none;
-      color: white;
-      font-size: 16px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
       cursor: pointer;
-      transition: 0.15s;
+      font-size: 16px;
     }
 
-    .title-actions button:hover {
-      background: rgba(255,80,80,0.6);
-    }
+    .title-actions button:hover { background: rgba(255,255,255,0.16); }
 
     .window-body {
-      flex: 1;
-      background: rgba(8, 14, 26, 0.7);
+      width: 100%;
+      height: calc(100% - 52px);
       position: relative;
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), #0a1222;
+      color: var(--text);
     }
 
-    /* HUD */
+    body.light .window-body {
+      background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.08)), #eef5ff;
+    }
+
+    .pane {
+      padding: 18px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      color: var(--text);
+    }
+
+    .card h3, .card h4, .card p {
+      margin-top: 0;
+    }
+
+    .muted { color: var(--muted); }
+
+    .action-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.12);
+      color: var(--text);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .primary { background: var(--blue); color: white; }
+    .success { background: var(--green); color: white; }
+    .danger { background: var(--red); color: white; }
+    .warning { background: var(--yellow); color: white; }
+
     .hud {
       position: absolute;
-      top: 16px;
-      left: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
-      border-radius: 24px;
-      padding: 12px 20px;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 20;
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
+      gap: 10px;
       align-items: center;
-      z-index: 10;
-      border: 1px solid rgba(255,255,255,0.1);
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.36);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .hud-left, .hud-right {
       display: flex;
-      gap: 14px;
       align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .pill {
-      background: rgba(59,130,246,0.3);
-      border-radius: 40px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: white;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.10);
+      font-size: 14px;
     }
 
     .hud button {
-      background: #1e40af;
       border: none;
-      padding: 8px 18px;
-      border-radius: 30px;
+      border-radius: 12px;
+      padding: 9px 12px;
+      background: var(--blue);
       color: white;
-      font-weight: 600;
       cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .hud button:hover {
-      background: #2563eb;
-      transform: scale(0.97);
+      font-size: 14px;
     }
 
     .emulator-wrap {
       position: absolute;
       inset: 0;
-      padding-top: 92px;
+      padding-top: 72px;
+      background: #05070e;
     }
 
     #game {
       width: 100%;
       height: 100%;
-      border-radius: 0 0 24px 24px;
     }
 
-    /* Start menu - clean grid */
-    .start-menu {
+    .game-lock {
       position: absolute;
-      bottom: 92px;
-      left: 24px;
-      width: 340px;
-      background: rgba(12, 20, 35, 0.9);
-      backdrop-filter: blur(24px);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 18px;
-      display: none;
-      z-index: 1100;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.4);
-    }
-
-    .start-menu.active {
-      display: block;
-      animation: fadeSlide 0.2s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(10px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-
-    .menu-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: white;
+      inset: 72px 0 0 0;
+      background: linear-gradient(180deg, rgba(5,8,15,0.6), rgba(5,8,15,0.92));
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .game-lock.hidden { display: none; }
+
+    .lock-card {
+      width: min(440px, calc(100% - 30px));
+      background: rgba(12,18,31,0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      color: white;
+    }
+
+    .lock-card svg {
+      width: 58px;
+      height: 58px;
+      stroke: #7db0ff;
+      fill: none;
+      stroke-width: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .start-menu {
+      position: absolute;
+      bottom: 84px;
+      left: 18px;
+      width: 360px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      padding: 16px;
+      color: var(--text);
+      display: none;
+      z-index: 3100;
+      box-shadow: var(--shadow);
+    }
+
+    .start-menu.active { display: block; }
+
+    .menu-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .menu-title { font-size: 18px; font-weight: 700; }
+
+    .menu-search {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 0 12px;
+      outline: none;
+      margin-bottom: 12px;
     }
 
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      gap: 12px;
     }
 
     .menu-card {
-      background: rgba(255,255,255,0.07);
-      border-radius: 20px;
-      padding: 14px 8px;
-      text-align: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px;
       cursor: pointer;
-      transition: 0.2s;
-      color: #eef2ff;
-      font-weight: 500;
+      text-align: center;
+      border: 1px solid transparent;
+      color: var(--text);
+    }
+
+    .menu-card .menu-ic {
+      margin: 0 auto 8px;
+      width: 34px;
+      height: 34px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
     }
 
     .menu-card svg {
-      width: 28px;
-      height: 28px;
-      stroke: white;
-      stroke-width: 1.5;
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
-    .menu-card:hover {
-      background: rgba(59,130,246,0.6);
-      transform: translateY(-3px);
-    }
-
-    /* Reward panel */
-    .reward-panel {
+    .toast-stack {
       position: absolute;
-      top: 100px;
-      right: 32px;
-      width: 320px;
-      background: rgba(12, 20, 32, 0.92);
-      backdrop-filter: blur(20px);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 22px;
-      color: white;
-      display: none;
-      z-index: 999;
-    }
-
-    .reward-panel.active {
-      display: block;
-      animation: fadeSlide 0.2s;
-    }
-
-    .reward-panel h3 {
-      font-size: 22px;
-      margin-bottom: 12px;
-      font-weight: 600;
-    }
-
-    .reward-panel button {
-      width: 100%;
-      background: #10b981;
-      padding: 12px;
-      border-radius: 40px;
-      font-weight: bold;
-      border: none;
-      color: white;
-      margin-top: 16px;
-      cursor: pointer;
+      top: 20px;
+      right: 20px;
+      z-index: 4000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      backdrop-filter: blur(20px);
+      min-width: 260px;
+      max-width: 340px;
+      background: rgba(15, 23, 42, 0.92);
       color: white;
-      padding: 12px 28px;
-      border-radius: 60px;
-      font-size: 14px;
-      font-weight: 500;
-      z-index: 2000;
-      display: none;
-      white-space: nowrap;
-      border: 1px solid rgba(255,255,255,0.2);
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.35);
+      animation: toastIn .22s ease;
     }
 
-    .toast.show {
-      display: block;
-      animation: fadeInUp 0.2s;
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; bottom: 70px; }
-      to { opacity: 1; bottom: 100px; }
+    .wallet-stat {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 4px 0 8px;
     }
 
-    .info-window-content {
-      padding: 24px;
-      color: #e2e8f0;
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    @media (max-width: 800px) {
-      .window { width: 94%; left: 3% !important; height: 80%; top: 12% !important; }
+    .history-item {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .toggle {
+      width: 56px;
+      height: 30px;
+      background: rgba(255,255,255,0.14);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      transition: .2s ease;
+    }
+
+    .toggle.on { background: rgba(37,99,235,0.65); }
+    .toggle.on::after { left: 30px; }
+
+    .browser-ui, .files-ui, .store-ui {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      height: 100%;
+    }
+
+    .side-panel {
+      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 16px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .main-panel {
+      padding: 16px;
+    }
+
+    .mini-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-item {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+    }
+
+    .game-thumb {
+      height: 110px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.55), rgba(125,176,255,0.18));
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .pill-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .window {
+        width: calc(100% - 20px) !important;
+        height: calc(100% - 100px) !important;
+        left: 10px !important;
+        top: 10px !important;
+      }
       .taskbar-center { display: none; }
-      .desktop-icons { scale: 0.85; top: 10px; left: 5px; }
+      .desktop-icons {
+        grid-template-columns: repeat(2, 82px);
+      }
+      .browser-ui, .files-ui, .store-ui {
+        grid-template-columns: 1fr;
+      }
+      .side-panel { display: none; }
     }
   </style>
 </head>
 <body>
-<div class="desktop">
-  <div class="wallpaper-overlay"></div>
+  <div class="desktop">
+    <div class="wallpaper-overlay"></div>
 
-  <!-- Desktop Icons with SVG -->
-  <div class="desktop-icons">
-    <div class="icon" onclick="openWindow('emuWindow')">
-      <div class="icon-box">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 12h4M10 12h4M14 12h4M8 8h.01M12 8h.01M16 8h.01M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
-        </svg>
+    <div class="desktop-icons">
+      <div class="icon" onclick="openApp('emuWindow', 'app-emulator')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01M7 6l1.5 3M17 6l-1.5 3"/></svg>
+        </div>
+        <div>Emulator</div>
       </div>
-      <span>Emulator</span>
-    </div>
-    <div class="icon" onclick="toggleRewards()">
-      <div class="icon-box">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6">
-          <circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
+
+      <div class="icon" onclick="openApp('gamesWindow', 'app-games')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg>
+        </div>
+        <div>My Games</div>
       </div>
-      <span>Rewards</span>
-    </div>
-    <div class="icon" onclick="openWindow('aboutWindow')">
-      <div class="icon-box">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6">
-          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-        </svg>
+
+      <div class="icon" onclick="openApp('rewardWindow', 'app-rewards')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg>
+        </div>
+        <div>Reward</div>
       </div>
-      <span>About</span>
-    </div>
-  </div>
 
-  <!-- Toast notification -->
-  <div id="toast" class="toast"></div>
-
-  <!-- Reward Panel -->
-  <div id="rewardPanel" class="reward-panel">
-    <h3>✨ Reward Center</h3>
-    <p>🎥 Watch ad → <strong>+3 Coins</strong><br>🎮 Start game costs <strong>5 coins</strong> (10 min session)</p>
-    <button id="watchAdBtn">📺 Watch Ad & Earn</button>
-  </div>
-
-  <!-- Start Menu -->
-  <div id="startMenu" class="start-menu">
-    <div class="menu-title"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg> Chat Wave OS</div>
-    <div class="menu-grid">
-      <div class="menu-card" onclick="openWindow('emuWindow'); closeStartMenu();"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 10h8"/></svg>Emulator</div>
-      <div class="menu-card" onclick="toggleRewards(); closeStartMenu();"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"><circle cx="12" cy="12" r="8"/><path d="M12 4v2M12 18v2"/></svg>Rewards</div>
-      <div class="menu-card" onclick="openWindow('aboutWindow'); closeStartMenu();"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>About</div>
-      <div class="menu-card" onclick="showToast('System operational. Enjoy!')"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"><path d="M12 2v4M4.93 4.93l2.83 2.83M2 12h4M18 12h4M16.24 7.76l2.83-2.83M12 18v4"/></svg>Settings</div>
-    </div>
-  </div>
-
-  <!-- Emulator Window -->
-  <div id="emuWindow" class="window active">
-    <div class="titlebar" onmousedown="dragStart(event, 'emuWindow')">
-      <div class="title-left"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3"/></svg> <span>Chat Wave Emulator — GBA</span></div>
-      <div class="title-actions"><button onclick="minimizeWindow('emuWindow')">—</button><button onclick="toggleMaximize('emuWindow')">▢</button><button onclick="closeWindow('emuWindow')">✕</button></div>
-    </div>
-    <div class="window-body">
-      <div class="hud">
-        <div class="hud-left"><div class="pill">🪙 Coins: <span id="coinCount">10</span></div><div class="pill">📟 Status: <span id="statusText">Ready</span></div><div class="pill">⏱️ Session: <span id="sessionTime">00:00</span></div></div>
-        <div class="hud-right"><button onclick="startGame()">▶ Start Game</button><button onclick="endSession()">⏹️ End Session</button></div>
+      <div class="icon" onclick="openApp('walletWindow', 'app-wallet')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/><circle cx="16" cy="12" r="1"/></svg>
+        </div>
+        <div>Wallet</div>
       </div>
-      <div class="emulator-wrap"><div id="game"></div></div>
+
+      <div class="icon" onclick="openApp('settingsWindow', 'app-settings')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m18.4 5.6-2.1 2.1"/><path d="m7.7 16.3-2.1 2.1"/><circle cx="12" cy="12" r="3.5"/></svg>
+        </div>
+        <div>Settings</div>
+      </div>
+
+      <div class="icon" onclick="openApp('browserWindow', 'app-browser')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 4 9 15 15 0 0 1-4 9 15 15 0 0 1-4-9 15 15 0 0 1 4-9z"/></svg>
+        </div>
+        <div>Browser</div>
+      </div>
+
+      <div class="icon" onclick="openApp('filesWindow', 'app-files')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
+        </div>
+        <div>Files</div>
+      </div>
+
+      <div class="icon" onclick="openApp('storeWindow', 'app-store')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M6 7V6a6 6 0 0 1 12 0v1"/><path d="M4 7h16l-1 12H5z"/><path d="M9 11h6"/></svg>
+        </div>
+        <div>Store</div>
+      </div>
+
+      <div class="icon" onclick="openApp('aboutWindow', 'app-about')">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg>
+        </div>
+        <div>About</div>
+      </div>
+    </div>
+
+    <div class="toast-stack" id="toastStack"></div>
+
+    <div id="startMenu" class="start-menu">
+      <div class="menu-top">
+        <div class="menu-title">Chat Wave OS</div>
+        <button class="action-btn" onclick="showToast('System is active')">Power</button>
+      </div>
+      <input class="menu-search" type="text" placeholder="Search apps..." oninput="filterMenu(this.value)" />
+      <div class="menu-grid" id="menuGrid">
+        <div class="menu-card" data-name="emulator" onclick="openApp('emuWindow', 'app-emulator'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg></div>
+          Emulator
+        </div>
+        <div class="menu-card" data-name="my games" onclick="openApp('gamesWindow', 'app-games'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg></div>
+          My Games
+        </div>
+        <div class="menu-card" data-name="wallet" onclick="openApp('walletWindow', 'app-wallet'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg></div>
+          Wallet
+        </div>
+        <div class="menu-card" data-name="rewards" onclick="openApp('rewardWindow', 'app-rewards'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg></div>
+          Rewards
+        </div>
+        <div class="menu-card" data-name="settings" onclick="openApp('settingsWindow', 'app-settings'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+          Settings
+        </div>
+        <div class="menu-card" data-name="browser" onclick="openApp('browserWindow', 'app-browser'); closeStartMenu();">
+          <div class="menu-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
+          Browser
+        </div>
+      </div>
+    </div>
+
+    <!-- Emulator -->
+    <div id="emuWindow" class="window active" style="z-index:150;">
+      <div class="titlebar" onmousedown="dragStart(event, 'emuWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg>
+          <span>Chat Wave Emulator</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('emuWindow')">—</button>
+          <button onclick="toggleMaximize('emuWindow')">▢</button>
+          <button onclick="closeWindow('emuWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="hud">
+          <div class="hud-left">
+            <div class="pill">Coins: <span id="coinCount">10</span></div>
+            <div class="pill">Status: <span id="statusText">Locked</span></div>
+            <div class="pill">Session: <span id="sessionTime">00:00</span></div>
+            <div class="pill">Cost: 5 coins / 10 min</div>
+          </div>
+          <div class="hud-right">
+            <button onclick="startGame()">Start Game</button>
+            <button onclick="endSession()">End Session</button>
+          </div>
+        </div>
+
+        <div class="emulator-wrap">
+          <div id="game"></div>
+        </div>
+
+        <div class="game-lock" id="gameLock">
+          <div class="lock-card">
+            <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
+            <h2 style="margin:0 0 10px;">Game Session Locked</h2>
+            <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">
+              Click Start Game to unlock a 10 minute session. 5 coins will be deducted when the session starts.
+            </p>
+            <button class="action-btn primary" onclick="startGame()">Unlock & Start</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Games -->
+    <div id="gamesWindow" class="window" style="width:760px;height:520px;left:220px;top:90px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'gamesWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg>
+          <span>My Games</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('gamesWindow')">—</button>
+          <button onclick="closeWindow('gamesWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body pane">
+        <div class="card-grid">
+          <div class="card">
+            <div class="game-thumb">🎮</div>
+            <div class="pill-badge">Game Boy Advance</div>
+            <h3>Pokemon FireRed</h3>
+            <p class="muted">Default demo game configured in EmulatorJS.</p>
+            <button class="action-btn primary" onclick="openApp('emuWindow','app-emulator'); showToast('Open emulator and click Start Game')">Play</button>
+          </div>
+          <div class="card">
+            <div class="game-thumb">🕹️</div>
+            <div class="pill-badge">Coming Soon</div>
+            <h3>More Games</h3>
+            <p class="muted">You can add more ROM-based game entries here later.</p>
+            <button class="action-btn" onclick="showToast('Add more games later')">Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards -->
+    <div id="rewardWindow" class="window" style="width:680px;height:480px;left:250px;top:110px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'rewardWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg>
+          <span>Reward Center</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('rewardWindow')">—</button>
+          <button onclick="closeWindow('rewardWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body pane">
+        <div class="card-grid">
+          <div class="card">
+            <h3>Watch Ad Reward</h3>
+            <p class="muted">Earn coins by watching a reward ad.</p>
+            <button class="action-btn success" onclick="watchAd()">Watch Ad +3 Coins</button>
+          </div>
+          <div class="card">
+            <h3>Daily Reward</h3>
+            <p class="muted">Claim your daily bonus once.</p>
+            <button class="action-btn primary" onclick="claimDaily()">Claim +5 Coins</button>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <h3 style="margin-bottom:10px;">Reward History</h3>
+          <div class="history-list" id="rewardHistory"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet -->
+    <div id="walletWindow" class="window" style="width:700px;height:500px;left:280px;top:100px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'walletWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg>
+          <span>Coin Wallet</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('walletWindow')">—</button>
+          <button onclick="closeWindow('walletWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body pane">
+        <div class="card-grid">
+          <div class="card">
+            <div class="muted">Current Balance</div>
+            <div class="wallet-stat" id="walletCoins">10</div>
+            <div class="muted">Available coins for gameplay sessions</div>
+          </div>
+          <div class="card">
+            <div class="muted">Play Cost</div>
+            <div class="wallet-stat">5</div>
+            <div class="muted">Coins per 10 minute session</div>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <h3 style="margin-bottom:10px;">Transaction History</h3>
+          <div class="history-list" id="walletHistory"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settingsWindow" class="window" style="width:640px;height:520px;left:320px;top:90px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'settingsWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+          <span>Settings</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('settingsWindow')">—</button>
+          <button onclick="closeWindow('settingsWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body pane">
+        <div class="settings-row">
+          <div>
+            <strong>Light Mode</strong>
+            <div class="muted">Switch between dark and light desktop theme</div>
+          </div>
+          <div class="toggle" id="themeToggle" onclick="toggleTheme(this)"></div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <strong>Sound</strong>
+            <div class="muted">Enable system sound preference</div>
+          </div>
+          <div class="toggle on" id="soundToggle" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <strong>Window Animations</strong>
+            <div class="muted">Keep smooth UI motion enabled</div>
+          </div>
+          <div class="toggle on" id="animToggle" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="settings-row" style="border-bottom:0;">
+          <div>
+            <strong>Wallpaper</strong>
+            <div class="muted">Cycle desktop background style</div>
+          </div>
+          <button class="action-btn" onclick="changeWallpaper()">Change Wallpaper</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Browser -->
+    <div id="browserWindow" class="window" style="width:840px;height:540px;left:180px;top:110px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'browserWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
+          <span>Browser</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('browserWindow')">—</button>
+          <button onclick="closeWindow('browserWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body browser-ui">
+        <div class="side-panel">
+          <h3>Tabs</h3>
+          <div class="mini-list">
+            <div class="mini-item">Home</div>
+            <div class="mini-item">Games</div>
+            <div class="mini-item">Store</div>
+          </div>
+        </div>
+        <div class="main-panel">
+          <div class="card" style="margin-bottom:14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <button class="action-btn">←</button>
+              <button class="action-btn">→</button>
+              <input style="flex:1;height:42px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.08);color:var(--text);padding:0 12px;" value="https://chatwave-os.local/home" />
+            </div>
+          </div>
+          <div class="card">
+            <h2>Chat Wave Browser</h2>
+            <p class="muted">This is a desktop-style browser window for realism. You can later connect it to real content.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Files -->
+    <div id="filesWindow" class="window" style="width:820px;height:540px;left:230px;top:115px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'filesWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
+          <span>Files</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('filesWindow')">—</button>
+          <button onclick="closeWindow('filesWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body files-ui">
+        <div class="side-panel">
+          <h3>Folders</h3>
+          <div class="mini-list">
+            <div class="mini-item">Games</div>
+            <div class="mini-item">BIOS</div>
+            <div class="mini-item">Assets</div>
+            <div class="mini-item">System</div>
+          </div>
+        </div>
+        <div class="main-panel">
+          <div class="card-grid">
+            <div class="card">
+              <h3>pokemon.gba</h3>
+              <p class="muted">Default ROM file for demo session</p>
+            </div>
+            <div class="card">
+              <h3>gba_bios.bin</h3>
+              <p class="muted">Optional BIOS file for Game Boy Advance core</p>
+            </div>
+            <div class="card">
+              <h3>loader.js</h3>
+              <p class="muted">EmulatorJS loader script</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Store -->
+    <div id="storeWindow" class="window" style="width:830px;height:540px;left:210px;top:108px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'storeWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><path d="M6 7V6a6 6 0 0 1 12 0v1"/><path d="M4 7h16l-1 12H5z"/></svg>
+          <span>Store</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('storeWindow')">—</button>
+          <button onclick="closeWindow('storeWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body store-ui">
+        <div class="side-panel">
+          <h3>Categories</h3>
+          <div class="mini-list">
+            <div class="mini-item">Themes</div>
+            <div class="mini-item">Wallpapers</div>
+            <div class="mini-item">Icon Packs</div>
+            <div class="mini-item">Boost Packs</div>
+          </div>
+        </div>
+        <div class="main-panel">
+          <div class="card-grid">
+            <div class="card">
+              <h3>Blue Neon Theme</h3>
+              <p class="muted">Premium desktop look</p>
+              <button class="action-btn">View</button>
+            </div>
+            <div class="card">
+              <h3>Wallpaper Pack</h3>
+              <p class="muted">Extra backgrounds for OS</p>
+              <button class="action-btn">View</button>
+            </div>
+            <div class="card">
+              <h3>Coin Booster</h3>
+              <p class="muted">Future premium pack concept</p>
+              <button class="action-btn">View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div id="aboutWindow" class="window" style="width:560px;height:420px;left:290px;top:120px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'aboutWindow')">
+        <div class="title-left">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg>
+          <span>About Chat Wave OS</span>
+        </div>
+        <div class="title-actions">
+          <button onclick="minimizeWindow('aboutWindow')">—</button>
+          <button onclick="closeWindow('aboutWindow')">✕</button>
+        </div>
+      </div>
+      <div class="window-body pane">
+        <div class="card">
+          <h2 style="margin-top:0;">Chat Wave OS</h2>
+          <p class="muted">A browser-based desktop gaming launcher with EmulatorJS integration.</p>
+          <p>Use coins to unlock gameplay sessions. Reward Center gives extra coins. Emulator starts only after pressing Start Game.</p>
+          <p><strong>Version:</strong> Updated HTML desktop edition</p>
+          <p><strong>Note:</strong> Use only game files you are allowed to use.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="taskbar">
+      <div class="taskbar-left">
+        <button class="start-btn" onclick="toggleStartMenu()">Start</button>
+      </div>
+
+      <div class="taskbar-center">
+        <button class="tb-app active-app" id="app-emulator" onclick="openApp('emuWindow', 'app-emulator')">Emulator</button>
+        <button class="tb-app" id="app-games" onclick="openApp('gamesWindow', 'app-games')">My Games</button>
+        <button class="tb-app" id="app-wallet" onclick="openApp('walletWindow', 'app-wallet')">Wallet</button>
+        <button class="tb-app" id="app-rewards" onclick="openApp('rewardWindow', 'app-rewards')">Rewards</button>
+        <button class="tb-app" id="app-settings" onclick="openApp('settingsWindow', 'app-settings')">Settings</button>
+      </div>
+
+      <div class="taskbar-right">
+        <button class="reward-btn" onclick="watchAd()">+3 Coins</button>
+        <div class="clock" id="clock">00:00</div>
+      </div>
     </div>
   </div>
 
-  <!-- About Window -->
-  <div id="aboutWindow" class="window" style="width:540px;height:420px;left:240px;top:130px;">
-    <div class="titlebar" onmousedown="dragStart(event, 'aboutWindow')">
-      <div class="title-left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>About Wave OS</span></div>
-      <div class="title-actions"><button onclick="minimizeWindow('aboutWindow')">—</button><button onclick="closeWindow('aboutWindow')">✕</button></div>
-    </div>
-    <div class="window-body">
-      <div class="info-window-content"><h2 style="display:flex;gap:8px;">🌊 Chat Wave OS</h2><p>Professional desktop-style GBA emulator launcher with coin economy. <br/>Play Pokémon FireRed with a fully functional reward system.</p><p><strong>📁 Required files (same folder):</strong><br/>- Pokemon - FireRed Version (USA, Europe) (Rev 1).gba<br/>- gba_bios.bin</p><p>Earn coins via rewards → play 10-minute sessions.</p><p style="margin-top:16px;">© EmulatorJS integration | Modern UI/UX</p></div>
-    </div>
-  </div>
+  <script>
+    let coins = 10;
+    let sessionSeconds = 0;
+    let sessionInterval = null;
+    let isRunning = false;
+    let gameBooted = false;
+    let dailyClaimed = false;
+    let wallpaperMode = 0;
+    const rewardLogs = [];
+    const walletLogs = [];
 
-  <!-- Taskbar with SVG icons -->
-  <div class="taskbar">
-    <div class="taskbar-left"><button class="icon-btn start-btn" onclick="toggleStartMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="white"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Start</button></div>
-    <div class="taskbar-center"><button class="icon-btn" onclick="openWindow('emuWindow')"><svg viewBox="0 0 24 24" fill="none" stroke="white"><rect x="4" y="6" width="16" height="12" rx="2"/></svg>Emulator</button><button class="icon-btn" onclick="toggleRewards()"><svg viewBox="0 0 24 24" fill="none" stroke="white"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4"/></svg>Rewards</button><button class="icon-btn" onclick="openWindow('aboutWindow')"><svg viewBox="0 0 24 24" fill="none" stroke="white"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>About</button></div>
-    <div class="taskbar-right"><button class="icon-btn" onclick="watchAd()"><svg viewBox="0 0 24 24" fill="none" stroke="white"><polygon points="5 3 19 12 5 21 5 3"/></svg> +3 Coins</button><div class="clock" id="clock">--:--</div></div>
-  </div>
-</div>
-
-<script>
-  // ---------- Core logic ----------
-  let coins = 10;
-  let sessionSeconds = 0;
-  let sessionInterval = null;
-  let isRunning = false;
-
-  function updateCoins() { document.getElementById("coinCount").innerText = coins; }
-  function setStatus(text) { document.getElementById("statusText").innerText = text; }
-  function formatTime(sec) { return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`; }
-  function updateSessionTime() { document.getElementById("sessionTime").innerText = formatTime(sessionSeconds); }
-  
-  function showToast(msg) {
-    const toast = document.getElementById("toast");
-    toast.innerText = msg;
-    toast.classList.add("show");
-    clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => toast.classList.remove("show"), 2800);
-  }
-
-  window.watchAd = function() {
-    coins += 3;
-    updateCoins();
-    showToast("📺 Ad watched! +3 coins earned.");
-  };
-
-  window.startGame = function() {
-    if (isRunning) { showToast("⚠️ Session already active!"); return; }
-    if (coins < 5) { showToast("💸 Not enough coins! Watch an ad (+3 coins)."); return; }
-    coins -= 5;
-    updateCoins();
-    sessionSeconds = 600;
-    updateSessionTime();
-    isRunning = true;
-    setStatus("🎮 Running");
-    showToast("🎉 Game session started! 10 minutes unlocked.");
-    if (sessionInterval) clearInterval(sessionInterval);
-    sessionInterval = setInterval(() => {
-      sessionSeconds--;
-      updateSessionTime();
-      if (sessionSeconds <= 0) endSession(true);
-    }, 1000);
-  };
-
-  window.endSession = function(auto = false) {
-    if (sessionInterval) clearInterval(sessionInterval);
-    sessionInterval = null;
-    isRunning = false;
-    sessionSeconds = 0;
-    updateSessionTime();
-    setStatus("Ready");
-    if (auto) showToast("⌛ Session finished. Get more coins to replay.");
-    else showToast("Session ended manually.");
-  };
-
-  // Window management
-  window.openWindow = function(id) {
-    const win = document.getElementById(id);
-    if (win) { win.classList.add("active"); bringToFront(win); }
-  };
-  window.closeWindow = function(id) { document.getElementById(id)?.classList.remove("active"); };
-  window.minimizeWindow = function(id) { document.getElementById(id)?.classList.remove("active"); };
-  window.toggleRewards = function() { document.getElementById("rewardPanel")?.classList.toggle("active"); };
-  window.toggleStartMenu = function() { document.getElementById("startMenu")?.classList.toggle("active"); };
-  window.closeStartMenu = function() { document.getElementById("startMenu")?.classList.remove("active"); };
-  
-  function bringToFront(el) { document.querySelectorAll(".window").forEach(w => w.style.zIndex = 50); el.style.zIndex = 120; }
-  
-  window.toggleMaximize = function(id) {
-    const win = document.getElementById(id);
-    if (!win.dataset.max) win.dataset.max = "0";
-    if (win.dataset.max === "1") {
-      win.style.top = win.dataset.prevTop; win.style.left = win.dataset.prevLeft;
-      win.style.width = win.dataset.prevWidth; win.style.height = win.dataset.prevHeight;
-      win.dataset.max = "0";
-    } else {
-      win.dataset.prevTop = win.style.top || "80px"; win.dataset.prevLeft = win.style.left || "180px";
-      win.dataset.prevWidth = win.style.width || "960px"; win.dataset.prevHeight = win.style.height || "620px";
-      win.style.top = "12px"; win.style.left = "12px";
-      win.style.width = "calc(100% - 24px)"; win.style.height = "calc(100% - 100px)";
-      win.dataset.max = "1";
+    function nowTime() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-  };
 
-  let dragData = null;
-  window.dragStart = function(e, id) {
-    const win = document.getElementById(id);
-    if (!win) return;
-    bringToFront(win);
-    dragData = { el: win, startX: e.clientX, startY: e.clientY, left: win.offsetLeft, top: win.offsetTop };
-    document.addEventListener("mousemove", dragging);
-    document.addEventListener("mouseup", dragEnd);
-  };
-  function dragging(e) { if (dragData) { const dx = e.clientX - dragData.startX, dy = e.clientY - dragData.startY; dragData.el.style.left = dragData.left + dx + "px"; dragData.el.style.top = dragData.top + dy + "px"; } }
-  function dragEnd() { document.removeEventListener("mousemove", dragging); document.removeEventListener("mouseup", dragEnd); dragData = null; }
-  
-  function updateClock() { const now = new Date(); document.getElementById("clock").innerText = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`; }
-  updateClock(); setInterval(updateClock, 1000);
-  updateCoins(); updateSessionTime();
-  document.addEventListener("click", (e) => { if (!e.target.closest(".start-btn") && !e.target.closest(".start-menu")) closeStartMenu(); if (!e.target.closest(".icon") && !e.target.closest("#rewardPanel") && !e.target.closest(".reward-btn") && !e.target.closest("[onclick*='toggleRewards']")) { const rp = document.getElementById("rewardPanel"); if (rp && !rp.contains(e.target)) rp.classList.remove("active"); } });
-  
-  // attach watch ad button manually from reward panel
-  document.getElementById("watchAdBtn")?.addEventListener("click", () => { watchAd(); });
-</script>
+    function pushRewardLog(text) {
+      rewardLogs.unshift({ text, time: nowTime() });
+      renderRewardHistory();
+    }
 
-<!-- EmulatorJS integration -->
-<script>
-  window.EJS_player = "#game";
-  window.EJS_core = "gba";
-  window.EJS_gameName = "Pokemon FireRed";
-  window.EJS_color = "#3b82f6";
-  window.EJS_startOnLoaded = true;
-  window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-  window.EJS_gameUrl = "Pokemon - FireRed Version (USA, Europe) (Rev 1).gba";
-  window.EJS_biosUrl = "gba_bios.bin";
-</script>
-<script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+    function pushWalletLog(text, amountText) {
+      walletLogs.unshift({ text, amountText, time: nowTime() });
+      renderWalletHistory();
+    }
+
+    function renderRewardHistory() {
+      const box = document.getElementById("rewardHistory");
+      if (!box) return;
+      box.innerHTML = rewardLogs.length ? rewardLogs.map(item => `
+        <div class="history-item">
+          <div>
+            <strong>${item.text}</strong><br>
+            <span class="muted">${item.time}</span>
+          </div>
+          <div class="muted">Reward</div>
+        </div>
+      `).join("") : `<div class="muted">No rewards claimed yet.</div>`;
+    }
+
+    function renderWalletHistory() {
+      const box = document.getElementById("walletHistory");
+      if (!box) return;
+      box.innerHTML = walletLogs.length ? walletLogs.map(item => `
+        <div class="history-item">
+          <div>
+            <strong>${item.text}</strong><br>
+            <span class="muted">${item.time}</span>
+          </div>
+          <div>${item.amountText}</div>
+        </div>
+      `).join("") : `<div class="muted">No transaction history yet.</div>`;
+    }
+
+    function updateCoins() {
+      document.getElementById("coinCount").textContent = coins;
+      document.getElementById("walletCoins").textContent = coins;
+    }
+
+    function setStatus(text) {
+      document.getElementById("statusText").textContent = text;
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
+      return m + ":" + s;
+    }
+
+    function updateSessionTime() {
+      document.getElementById("sessionTime").textContent = formatTime(sessionSeconds);
+    }
+
+    function showToast(msg) {
+      const stack = document.getElementById("toastStack");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = msg;
+      stack.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-5px)";
+      }, 2200);
+      setTimeout(() => toast.remove(), 2600);
+    }
+
+    function watchAd() {
+      coins += 3;
+      updateCoins();
+      pushRewardLog("Watched ad and earned coins");
+      pushWalletLog("Ad reward", "+3");
+      showToast("Ad watched. You earned 3 coins.");
+    }
+
+    function claimDaily() {
+      if (dailyClaimed) {
+        showToast("Daily reward already claimed.");
+        return;
+      }
+      dailyClaimed = true;
+      coins += 5;
+      updateCoins();
+      pushRewardLog("Daily reward claimed");
+      pushWalletLog("Daily reward", "+5");
+      showToast("Daily reward claimed. +5 coins added.");
+    }
+
+    function bootGameOnce() {
+      if (gameBooted) return;
+      if (typeof EJS_emulator !== "undefined" && EJS_emulator && typeof EJS_emulator.play === "function") {
+        try {
+          EJS_emulator.play();
+        } catch (e) {}
+      }
+      gameBooted = true;
+    }
+
+    function unlockGameView() {
+      document.getElementById("gameLock").classList.add("hidden");
+    }
+
+    function lockGameView() {
+      document.getElementById("gameLock").classList.remove("hidden");
+    }
+
+    function startGame() {
+      openApp('emuWindow', 'app-emulator');
+
+      if (isRunning) {
+        showToast("A session is already running.");
+        return;
+      }
+
+      if (coins < 5) {
+        showToast("Not enough coins. Watch an ad first.");
+        return;
+      }
+
+      coins -= 5;
+      updateCoins();
+      pushWalletLog("Gameplay session started", "-5");
+      sessionSeconds = 600;
+      updateSessionTime();
+      isRunning = true;
+      setStatus("Running");
+      unlockGameView();
+      bootGameOnce();
+      showToast("Game started. 5 coins deducted.");
+
+      sessionInterval = setInterval(() => {
+        sessionSeconds--;
+        updateSessionTime();
+
+        if (sessionSeconds <= 0) {
+          endSession(true);
+        }
+      }, 1000);
+    }
+
+    function endSession(auto = false) {
+      if (!isRunning && !sessionInterval) {
+        lockGameView();
+        setStatus("Locked");
+        return;
+      }
+      if (sessionInterval) clearInterval(sessionInterval);
+      sessionInterval = null;
+      isRunning = false;
+      sessionSeconds = 0;
+      updateSessionTime();
+      setStatus("Locked");
+      lockGameView();
+      showToast(auto ? "Session ended. Get more coins to play again." : "Session ended.");
+    }
+
+    function openApp(id, taskId) {
+      const win = document.getElementById(id);
+      win.classList.add("active");
+      bringToFront(win);
+      markTaskbar(taskId);
+      showToast(win.querySelector(".title-left span:last-child")?.textContent || "App opened");
+    }
+
+    function closeWindow(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function minimizeWindow(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function bringToFront(el) {
+      const all = document.querySelectorAll(".window");
+      let z = 100;
+      all.forEach(w => {
+        w.style.zIndex = z;
+        z++;
+      });
+      el.style.zIndex = 999;
+    }
+
+    function markTaskbar(taskId) {
+      document.querySelectorAll('.tb-app').forEach(btn => btn.classList.remove('active-app'));
+      if (taskId) {
+        const el = document.getElementById(taskId);
+        if (el) el.classList.add('active-app');
+      }
+    }
+
+    function toggleStartMenu() {
+      document.getElementById("startMenu").classList.toggle("active");
+    }
+
+    function closeStartMenu() {
+      document.getElementById("startMenu").classList.remove("active");
+    }
+
+    function filterMenu(value) {
+      value = value.toLowerCase().trim();
+      document.querySelectorAll('#menuGrid .menu-card').forEach(card => {
+        const ok = card.dataset.name.includes(value);
+        card.style.display = ok ? '' : 'none';
+      });
+    }
+
+    function toggleMaximize(id) {
+      const win = document.getElementById(id);
+      if (win.dataset.max === "1") {
+        win.style.top = win.dataset.prevTop;
+        win.style.left = win.dataset.prevLeft;
+        win.style.width = win.dataset.prevWidth;
+        win.style.height = win.dataset.prevHeight;
+        win.dataset.max = "0";
+      } else {
+        win.dataset.prevTop = win.style.top || "100px";
+        win.dataset.prevLeft = win.style.left || "180px";
+        win.dataset.prevWidth = win.style.width || "920px";
+        win.dataset.prevHeight = win.style.height || "580px";
+        win.style.top = "10px";
+        win.style.left = "10px";
+        win.style.width = "calc(100% - 20px)";
+        win.style.height = "calc(100% - 88px)";
+        win.dataset.max = "1";
+      }
+    }
+
+    let dragData = null;
+    function dragStart(e, id) {
+      if (e.target.tagName === "BUTTON") return;
+      const win = document.getElementById(id);
+      bringToFront(win);
+      dragData = {
+        el: win,
+        startX: e.clientX,
+        startY: e.clientY,
+        left: win.offsetLeft,
+        top: win.offsetTop
+      };
+      document.addEventListener("mousemove", dragging);
+      document.addEventListener("mouseup", dragEnd);
+    }
+
+    function dragging(e) {
+      if (!dragData) return;
+      if (dragData.el.dataset.max === "1") return;
+      const dx = e.clientX - dragData.startX;
+      const dy = e.clientY - dragData.startY;
+      dragData.el.style.left = dragData.left + dx + "px";
+      dragData.el.style.top = dragData.top + dy + "px";
+    }
+
+    function dragEnd() {
+      document.removeEventListener("mousemove", dragging);
+      document.removeEventListener("mouseup", dragEnd);
+      dragData = null;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("clock").textContent = h + ":" + m;
+    }
+
+    function toggleSwitch(el) {
+      el.classList.toggle("on");
+    }
+
+    function toggleTheme(el) {
+      el.classList.toggle("on");
+      document.body.classList.toggle("light");
+      showToast(document.body.classList.contains("light") ? "Light mode enabled" : "Dark mode enabled");
+    }
+
+    function changeWallpaper() {
+      wallpaperMode = (wallpaperMode + 1) % 3;
+      if (wallpaperMode === 0) {
+        document.body.style.background =
+          "radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 20%), radial-gradient(circle at bottom left, rgba(96,165,250,0.18), transparent 24%), linear-gradient(135deg, #08111e 0%, #102341 40%, #14305d 100%)";
+      } else if (wallpaperMode === 1) {
+        document.body.style.background =
+          "radial-gradient(circle at 20% 20%, rgba(168,85,247,0.18), transparent 24%), radial-gradient(circle at 80% 80%, rgba(59,130,246,0.18), transparent 24%), linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #1d4ed8 100%)";
+      } else {
+        document.body.style.background =
+          "radial-gradient(circle at 15% 15%, rgba(16,185,129,0.12), transparent 22%), radial-gradient(circle at 85% 15%, rgba(37,99,235,0.18), transparent 22%), linear-gradient(135deg, #09121c 0%, #12334b 45%, #0b3b59 100%)";
+      }
+      showToast("Wallpaper changed");
+    }
+
+    updateCoins();
+    updateSessionTime();
+    renderRewardHistory();
+    renderWalletHistory();
+    updateClock();
+    setInterval(updateClock, 1000);
+    setStatus("Locked");
+    lockGameView();
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".start-btn") && !e.target.closest(".start-menu")) {
+        closeStartMenu();
+      }
+    });
+  </script>
+
+  <script>
+    EJS_player = "#game";
+    EJS_core = "gba";
+    EJS_gameName = "Pokemon";
+    EJS_color = "#0064ff";
+    EJS_startOnLoaded = false;
+    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+    EJS_gameUrl = "./pokemon.gba";
+    EJS_biosUrl = "./gba_bios.bin";
+  </script>
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body>
 </html>
