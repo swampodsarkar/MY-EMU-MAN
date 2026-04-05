@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Wave OS</title>
+  <title>SRS OS Player</title>
   <style>
     * { box-sizing: border-box; user-select: none; }
     html, body {
@@ -27,6 +27,7 @@
       --green: #16a34a;
       --red: #dc2626;
       --yellow: #f59e0b;
+      --purple: #7c3aed;
       --shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
@@ -42,6 +43,7 @@
       --green: #15803d;
       --red: #dc2626;
       --yellow: #d97706;
+      --purple: #7c3aed;
       --shadow: 0 20px 60px rgba(20,40,80,0.15);
     }
 
@@ -248,9 +250,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.08)), #eef5ff;
     }
 
-    .pane {
-      padding: 18px;
-    }
+    .pane { padding: 18px; }
 
     .card-grid {
       display: grid;
@@ -266,9 +266,7 @@
       color: var(--text);
     }
 
-    .card h3, .card h4, .card p {
-      margin-top: 0;
-    }
+    .card h3, .card h4, .card p { margin-top: 0; }
 
     .muted { color: var(--muted); }
 
@@ -286,6 +284,7 @@
     .success { background: var(--green); color: white; }
     .danger { background: var(--red); color: white; }
     .warning { background: var(--yellow); color: white; }
+    .purple { background: var(--purple); color: white; }
 
     .hud {
       position: absolute;
@@ -354,7 +353,7 @@
     .game-lock.hidden { display: none; }
 
     .lock-card {
-      width: min(440px, calc(100% - 30px));
+      width: min(460px, calc(100% - 30px));
       background: rgba(12,18,31,0.92);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 22px;
@@ -377,7 +376,7 @@
       position: absolute;
       bottom: 84px;
       left: 18px;
-      width: 360px;
+      width: 380px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -543,9 +542,7 @@
       background: rgba(255,255,255,0.04);
     }
 
-    .main-panel {
-      padding: 16px;
-    }
+    .main-panel { padding: 16px; }
 
     .mini-list {
       display: flex;
@@ -583,6 +580,26 @@
       margin-bottom: 10px;
     }
 
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat-card .big {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
     @media (max-width: 980px) {
       .window {
         width: calc(100% - 20px) !important;
@@ -591,12 +608,8 @@
         top: 10px !important;
       }
       .taskbar-center { display: none; }
-      .desktop-icons {
-        grid-template-columns: repeat(2, 82px);
-      }
-      .browser-ui, .files-ui, .store-ui {
-        grid-template-columns: 1fr;
-      }
+      .desktop-icons { grid-template-columns: repeat(2, 82px); }
+      .browser-ui, .files-ui, .store-ui { grid-template-columns: 1fr; }
       .side-panel { display: none; }
     }
   </style>
@@ -607,65 +620,42 @@
 
     <div class="desktop-icons">
       <div class="icon" onclick="openApp('emuWindow', 'app-emulator')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01M7 6l1.5 3M17 6l-1.5 3"/></svg>
-        </div>
-        <div>Emulator</div>
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01M7 6l1.5 3M17 6l-1.5 3"/></svg></div>
+        <div>Games</div>
       </div>
 
-      <div class="icon" onclick="openApp('gamesWindow', 'app-games')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg>
-        </div>
-        <div>My Games</div>
+      <div class="icon" onclick="openApp('taskWindow', 'app-tasks')">
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div>Tasks</div>
       </div>
 
-      <div class="icon" onclick="openApp('rewardWindow', 'app-rewards')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg>
-        </div>
-        <div>Reward</div>
+      <div class="icon" onclick="openApp('adWindow', 'app-ads')">
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg></div>
+        <div>Ads</div>
       </div>
 
       <div class="icon" onclick="openApp('walletWindow', 'app-wallet')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/><circle cx="16" cy="12" r="1"/></svg>
-        </div>
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/><circle cx="16" cy="12" r="1"/></svg></div>
         <div>Wallet</div>
       </div>
 
+      <div class="icon" onclick="openApp('rewardWindow', 'app-rewards')">
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg></div>
+        <div>Rewards</div>
+      </div>
+
       <div class="icon" onclick="openApp('settingsWindow', 'app-settings')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m18.4 5.6-2.1 2.1"/><path d="m7.7 16.3-2.1 2.1"/><circle cx="12" cy="12" r="3.5"/></svg>
-        </div>
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m18.4 5.6-2.1 2.1"/><path d="m7.7 16.3-2.1 2.1"/><circle cx="12" cy="12" r="3.5"/></svg></div>
         <div>Settings</div>
       </div>
 
-      <div class="icon" onclick="openApp('browserWindow', 'app-browser')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 4 9 15 15 0 0 1-4 9 15 15 0 0 1-4-9 15 15 0 0 1 4-9z"/></svg>
-        </div>
-        <div>Browser</div>
-      </div>
-
       <div class="icon" onclick="openApp('filesWindow', 'app-files')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
-        </div>
+        <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></div>
         <div>Files</div>
       </div>
 
-      <div class="icon" onclick="openApp('storeWindow', 'app-store')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><path d="M6 7V6a6 6 0 0 1 12 0v1"/><path d="M4 7h16l-1 12H5z"/><path d="M9 11h6"/></svg>
-        </div>
-        <div>Store</div>
-      </div>
-
       <div class="icon" onclick="openApp('aboutWindow', 'app-about')">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg>
-        </div>
+        <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg></div>
         <div>About</div>
       </div>
     </div>
@@ -674,400 +664,215 @@
 
     <div id="startMenu" class="start-menu">
       <div class="menu-top">
-        <div class="menu-title">Chat Wave OS</div>
+        <div class="menu-title">SRS OS Player</div>
         <button class="action-btn" onclick="showToast('System is active')">Power</button>
       </div>
       <input class="menu-search" type="text" placeholder="Search apps..." oninput="filterMenu(this.value)" />
       <div class="menu-grid" id="menuGrid">
-        <div class="menu-card" data-name="emulator" onclick="openApp('emuWindow', 'app-emulator'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg></div>
-          Emulator
-        </div>
-        <div class="menu-card" data-name="my games" onclick="openApp('gamesWindow', 'app-games'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg></div>
-          My Games
-        </div>
-        <div class="menu-card" data-name="wallet" onclick="openApp('walletWindow', 'app-wallet'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg></div>
-          Wallet
-        </div>
-        <div class="menu-card" data-name="rewards" onclick="openApp('rewardWindow', 'app-rewards'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg></div>
-          Rewards
-        </div>
-        <div class="menu-card" data-name="settings" onclick="openApp('settingsWindow', 'app-settings'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
-          Settings
-        </div>
-        <div class="menu-card" data-name="browser" onclick="openApp('browserWindow', 'app-browser'); closeStartMenu();">
-          <div class="menu-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
-          Browser
-        </div>
+        <div class="menu-card" data-name="games emulator" onclick="openApp('emuWindow', 'app-emulator'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg></div>Games</div>
+        <div class="menu-card" data-name="tasks task hub" onclick="openApp('taskWindow', 'app-tasks'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>Tasks</div>
+        <div class="menu-card" data-name="ads ad section" onclick="openApp('adWindow', 'app-ads'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg></div>Ads</div>
+        <div class="menu-card" data-name="wallet income points" onclick="openApp('walletWindow', 'app-wallet'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg></div>Wallet</div>
+        <div class="menu-card" data-name="rewards" onclick="openApp('rewardWindow', 'app-rewards'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg></div>Rewards</div>
+        <div class="menu-card" data-name="settings" onclick="openApp('settingsWindow', 'app-settings'); closeStartMenu();"><div class="menu-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>Settings</div>
       </div>
     </div>
 
-    <!-- Emulator -->
     <div id="emuWindow" class="window active" style="z-index:150;">
       <div class="titlebar" onmousedown="dragStart(event, 'emuWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg>
-          <span>Chat Wave Emulator</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('emuWindow')">—</button>
-          <button onclick="toggleMaximize('emuWindow')">▢</button>
-          <button onclick="closeWindow('emuWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M8 9h8a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2l-2-2H11l-2 2H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4Z"/><path d="M9 13h.01M15 13h.01"/></svg><span>SRS OS Player Games</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('emuWindow')">—</button><button onclick="toggleMaximize('emuWindow')">▢</button><button onclick="closeWindow('emuWindow')">✕</button></div>
       </div>
       <div class="window-body">
         <div class="hud">
           <div class="hud-left">
-            <div class="pill">Coins: <span id="coinCount">10</span></div>
+            <div class="pill">Wallet: <span id="coinCount">15</span> pts</div>
             <div class="pill">Status: <span id="statusText">Locked</span></div>
             <div class="pill">Session: <span id="sessionTime">00:00</span></div>
-            <div class="pill">Cost: 5 coins / 10 min</div>
+            <div class="pill">Play Cost: 5 pts / 10 min</div>
           </div>
           <div class="hud-right">
             <button onclick="startGame()">Start Game</button>
             <button onclick="endSession()">End Session</button>
           </div>
         </div>
-
-        <div class="emulator-wrap">
-          <div id="game"></div>
-        </div>
-
+        <div class="emulator-wrap"><div id="game"></div></div>
         <div class="game-lock" id="gameLock">
           <div class="lock-card">
             <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
             <h2 style="margin:0 0 10px;">Game Session Locked</h2>
-            <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">
-              Click Start Game to unlock a 10 minute session. 5 coins will be deducted when the session starts.
-            </p>
+            <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">Use your wallet points to play. 5 points will be deducted for 10 minutes of gameplay.</p>
             <button class="action-btn primary" onclick="startGame()">Unlock & Start</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- My Games -->
-    <div id="gamesWindow" class="window" style="width:760px;height:520px;left:220px;top:90px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'gamesWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg>
-          <span>My Games</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('gamesWindow')">—</button>
-          <button onclick="closeWindow('gamesWindow')">✕</button>
-        </div>
+    <div id="taskWindow" class="window" style="width:820px;height:560px;left:220px;top:90px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'taskWindow')">
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Task Hub</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('taskWindow')">—</button><button onclick="closeWindow('taskWindow')">✕</button></div>
       </div>
       <div class="window-body pane">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="muted">Wallet Balance</div><div class="big" id="taskWalletStat">15</div></div>
+          <div class="stat-card"><div class="muted">Tasks Completed</div><div class="big" id="tasksCompletedStat">0</div></div>
+          <div class="stat-card"><div class="muted">Today Earned</div><div class="big" id="todayEarnedStat">0</div></div>
+          <div class="stat-card"><div class="muted">Game Sessions</div><div class="big" id="playSessionsStat">0</div></div>
+        </div>
         <div class="card-grid">
           <div class="card">
-            <div class="game-thumb">🎮</div>
-            <div class="pill-badge">Game Boy Advance</div>
-            <h3>Pokemon FireRed</h3>
-            <p class="muted">Default demo game configured in EmulatorJS.</p>
-            <button class="action-btn primary" onclick="openApp('emuWindow','app-emulator'); showToast('Open emulator and click Start Game')">Play</button>
+            <h3>Watch Reward Ad</h3>
+            <p class="muted">Watch a quick ad demo and earn 3 points.</p>
+            <button class="action-btn success" onclick="completeTask('Reward ad watched', 3)">Watch Ad +3</button>
           </div>
           <div class="card">
-            <div class="game-thumb">🕹️</div>
-            <div class="pill-badge">Coming Soon</div>
-            <h3>More Games</h3>
-            <p class="muted">You can add more ROM-based game entries here later.</p>
-            <button class="action-btn" onclick="showToast('Add more games later')">Details</button>
+            <h3>Daily Bonus Task</h3>
+            <p class="muted">Complete your daily task to receive 4 points.</p>
+            <button class="action-btn primary" onclick="completeTask('Daily task completed', 4)">Complete Daily +4</button>
           </div>
+          <div class="card">
+            <h3>Offerwall Task</h3>
+            <p class="muted">Demo offerwall completion adds 6 points.</p>
+            <button class="action-btn purple" onclick="completeTask('Offerwall task completed', 6)">Offer Task +6</button>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <h3 style="margin-bottom:10px;">Task History</h3>
+          <div class="history-list" id="taskHistory"></div>
         </div>
       </div>
     </div>
 
-    <!-- Rewards -->
+    <div id="adWindow" class="window" style="width:700px;height:520px;left:260px;top:110px;">
+      <div class="titlebar" onmousedown="dragStart(event, 'adWindow')">
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg><span>Ad Section</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('adWindow')">—</button><button onclick="closeWindow('adWindow')">✕</button></div>
+      </div>
+      <div class="window-body pane">
+        <div class="card-grid">
+          <div class="card">
+            <h3>Banner Ad Zone</h3>
+            <p class="muted">Place your future ad code or banner here.</p>
+            <button class="action-btn" onclick="showToast('Banner ad area ready')">Preview</button>
+          </div>
+          <div class="card">
+            <h3>Rewarded Ad</h3>
+            <p class="muted">User watches ad and gets points for gaming.</p>
+            <button class="action-btn success" onclick="completeTask('Rewarded ad completed', 3)">Watch Rewarded +3</button>
+          </div>
+          <div class="card">
+            <h3>Sponsored Task</h3>
+            <p class="muted">A demo advertiser task that rewards 5 points.</p>
+            <button class="action-btn warning" onclick="completeTask('Sponsored ad task completed', 5)">Do Task +5</button>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <h3>How it works</h3>
+          <p class="muted">Users earn points from ads and tasks, then spend those wallet points to unlock game time.</p>
+        </div>
+      </div>
+    </div>
+
     <div id="rewardWindow" class="window" style="width:680px;height:480px;left:250px;top:110px;">
       <div class="titlebar" onmousedown="dragStart(event, 'rewardWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg>
-          <span>Reward Center</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('rewardWindow')">—</button>
-          <button onclick="closeWindow('rewardWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 8c0-2 1.8-3 5-3s5 1 5 3-1.8 3-5 3-5 1-5 3 1.8 3 5 3 5-1 5-3"/></svg><span>Reward Center</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('rewardWindow')">—</button><button onclick="closeWindow('rewardWindow')">✕</button></div>
       </div>
       <div class="window-body pane">
         <div class="card-grid">
-          <div class="card">
-            <h3>Watch Ad Reward</h3>
-            <p class="muted">Earn coins by watching a reward ad.</p>
-            <button class="action-btn success" onclick="watchAd()">Watch Ad +3 Coins</button>
-          </div>
-          <div class="card">
-            <h3>Daily Reward</h3>
-            <p class="muted">Claim your daily bonus once.</p>
-            <button class="action-btn primary" onclick="claimDaily()">Claim +5 Coins</button>
-          </div>
+          <div class="card"><h3>Quick Ad Reward</h3><p class="muted">Earn 3 points instantly.</p><button class="action-btn success" onclick="watchAd()">Watch Ad +3</button></div>
+          <div class="card"><h3>Daily Reward</h3><p class="muted">Claim once and receive 5 points.</p><button class="action-btn primary" onclick="claimDaily()">Claim +5</button></div>
         </div>
-        <div style="margin-top:18px;">
-          <h3 style="margin-bottom:10px;">Reward History</h3>
-          <div class="history-list" id="rewardHistory"></div>
-        </div>
+        <div style="margin-top:18px;"><h3 style="margin-bottom:10px;">Reward History</h3><div class="history-list" id="rewardHistory"></div></div>
       </div>
     </div>
 
-    <!-- Wallet -->
-    <div id="walletWindow" class="window" style="width:700px;height:500px;left:280px;top:100px;">
+    <div id="walletWindow" class="window" style="width:760px;height:540px;left:280px;top:100px;">
       <div class="titlebar" onmousedown="dragStart(event, 'walletWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg>
-          <span>Coin Wallet</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('walletWindow')">—</button>
-          <button onclick="closeWindow('walletWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M16 12h4"/></svg><span>Wallet App</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('walletWindow')">—</button><button onclick="closeWindow('walletWindow')">✕</button></div>
       </div>
       <div class="window-body pane">
         <div class="card-grid">
-          <div class="card">
-            <div class="muted">Current Balance</div>
-            <div class="wallet-stat" id="walletCoins">10</div>
-            <div class="muted">Available coins for gameplay sessions</div>
-          </div>
-          <div class="card">
-            <div class="muted">Play Cost</div>
-            <div class="wallet-stat">5</div>
-            <div class="muted">Coins per 10 minute session</div>
-          </div>
+          <div class="card"><div class="muted">Current Balance</div><div class="wallet-stat" id="walletCoins">15</div><div class="muted">Points available for gameplay</div></div>
+          <div class="card"><div class="muted">Play Cost</div><div class="wallet-stat">5</div><div class="muted">Points deducted for 10 minute session</div></div>
+          <div class="card"><div class="muted">Today Earned</div><div class="wallet-stat" id="walletEarned">0</div><div class="muted">Total points earned from ads and tasks</div></div>
         </div>
         <div style="margin-top:18px;">
-          <h3 style="margin-bottom:10px;">Transaction History</h3>
+          <h3 style="margin-bottom:10px;">Wallet History</h3>
           <div class="history-list" id="walletHistory"></div>
         </div>
       </div>
     </div>
 
-    <!-- Settings -->
     <div id="settingsWindow" class="window" style="width:640px;height:520px;left:320px;top:90px;">
       <div class="titlebar" onmousedown="dragStart(event, 'settingsWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
-          <span>Settings</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('settingsWindow')">—</button>
-          <button onclick="closeWindow('settingsWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>Settings</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('settingsWindow')">—</button><button onclick="closeWindow('settingsWindow')">✕</button></div>
       </div>
       <div class="window-body pane">
-        <div class="settings-row">
-          <div>
-            <strong>Light Mode</strong>
-            <div class="muted">Switch between dark and light desktop theme</div>
-          </div>
-          <div class="toggle" id="themeToggle" onclick="toggleTheme(this)"></div>
-        </div>
-
-        <div class="settings-row">
-          <div>
-            <strong>Sound</strong>
-            <div class="muted">Enable system sound preference</div>
-          </div>
-          <div class="toggle on" id="soundToggle" onclick="toggleSwitch(this)"></div>
-        </div>
-
-        <div class="settings-row">
-          <div>
-            <strong>Window Animations</strong>
-            <div class="muted">Keep smooth UI motion enabled</div>
-          </div>
-          <div class="toggle on" id="animToggle" onclick="toggleSwitch(this)"></div>
-        </div>
-
-        <div class="settings-row" style="border-bottom:0;">
-          <div>
-            <strong>Wallpaper</strong>
-            <div class="muted">Cycle desktop background style</div>
-          </div>
-          <button class="action-btn" onclick="changeWallpaper()">Change Wallpaper</button>
-        </div>
+        <div class="settings-row"><div><strong>Light Mode</strong><div class="muted">Switch desktop theme</div></div><div class="toggle" id="themeToggle" onclick="toggleTheme(this)"></div></div>
+        <div class="settings-row"><div><strong>Sound</strong><div class="muted">Enable system sound preference</div></div><div class="toggle on" onclick="toggleSwitch(this)"></div></div>
+        <div class="settings-row"><div><strong>Window Animations</strong><div class="muted">Smooth motion enabled</div></div><div class="toggle on" onclick="toggleSwitch(this)"></div></div>
+        <div class="settings-row" style="border-bottom:0;"><div><strong>Wallpaper</strong><div class="muted">Cycle desktop background style</div></div><button class="action-btn" onclick="changeWallpaper()">Change Wallpaper</button></div>
       </div>
     </div>
 
-    <!-- Browser -->
-    <div id="browserWindow" class="window" style="width:840px;height:540px;left:180px;top:110px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'browserWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
-          <span>Browser</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('browserWindow')">—</button>
-          <button onclick="closeWindow('browserWindow')">✕</button>
-        </div>
-      </div>
-      <div class="window-body browser-ui">
-        <div class="side-panel">
-          <h3>Tabs</h3>
-          <div class="mini-list">
-            <div class="mini-item">Home</div>
-            <div class="mini-item">Games</div>
-            <div class="mini-item">Store</div>
-          </div>
-        </div>
-        <div class="main-panel">
-          <div class="card" style="margin-bottom:14px;">
-            <div style="display:flex;gap:10px;align-items:center;">
-              <button class="action-btn">←</button>
-              <button class="action-btn">→</button>
-              <input style="flex:1;height:42px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.08);color:var(--text);padding:0 12px;" value="https://chatwave-os.local/home" />
-            </div>
-          </div>
-          <div class="card">
-            <h2>Chat Wave Browser</h2>
-            <p class="muted">This is a desktop-style browser window for realism. You can later connect it to real content.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Files -->
     <div id="filesWindow" class="window" style="width:820px;height:540px;left:230px;top:115px;">
       <div class="titlebar" onmousedown="dragStart(event, 'filesWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
-          <span>Files</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('filesWindow')">—</button>
-          <button onclick="closeWindow('filesWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg><span>Files</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('filesWindow')">—</button><button onclick="closeWindow('filesWindow')">✕</button></div>
       </div>
       <div class="window-body files-ui">
-        <div class="side-panel">
-          <h3>Folders</h3>
-          <div class="mini-list">
-            <div class="mini-item">Games</div>
-            <div class="mini-item">BIOS</div>
-            <div class="mini-item">Assets</div>
-            <div class="mini-item">System</div>
-          </div>
-        </div>
-        <div class="main-panel">
-          <div class="card-grid">
-            <div class="card">
-              <h3>pokemon.gba</h3>
-              <p class="muted">Default ROM file for demo session</p>
-            </div>
-            <div class="card">
-              <h3>gba_bios.bin</h3>
-              <p class="muted">Optional BIOS file for Game Boy Advance core</p>
-            </div>
-            <div class="card">
-              <h3>loader.js</h3>
-              <p class="muted">EmulatorJS loader script</p>
-            </div>
-          </div>
-        </div>
+        <div class="side-panel"><h3>Folders</h3><div class="mini-list"><div class="mini-item">Games</div><div class="mini-item">BIOS</div><div class="mini-item">Ads</div><div class="mini-item">Tasks</div></div></div>
+        <div class="main-panel"><div class="card-grid"><div class="card"><h3>pokemon.gba</h3><p class="muted">Default ROM file</p></div><div class="card"><h3>gba_bios.bin</h3><p class="muted">Optional BIOS file</p></div><div class="card"><h3>Reward Ads</h3><p class="muted">Ad-based earning content area</p></div></div></div>
       </div>
     </div>
 
-    <!-- Store -->
-    <div id="storeWindow" class="window" style="width:830px;height:540px;left:210px;top:108px;">
-      <div class="titlebar" onmousedown="dragStart(event, 'storeWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><path d="M6 7V6a6 6 0 0 1 12 0v1"/><path d="M4 7h16l-1 12H5z"/></svg>
-          <span>Store</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('storeWindow')">—</button>
-          <button onclick="closeWindow('storeWindow')">✕</button>
-        </div>
-      </div>
-      <div class="window-body store-ui">
-        <div class="side-panel">
-          <h3>Categories</h3>
-          <div class="mini-list">
-            <div class="mini-item">Themes</div>
-            <div class="mini-item">Wallpapers</div>
-            <div class="mini-item">Icon Packs</div>
-            <div class="mini-item">Boost Packs</div>
-          </div>
-        </div>
-        <div class="main-panel">
-          <div class="card-grid">
-            <div class="card">
-              <h3>Blue Neon Theme</h3>
-              <p class="muted">Premium desktop look</p>
-              <button class="action-btn">View</button>
-            </div>
-            <div class="card">
-              <h3>Wallpaper Pack</h3>
-              <p class="muted">Extra backgrounds for OS</p>
-              <button class="action-btn">View</button>
-            </div>
-            <div class="card">
-              <h3>Coin Booster</h3>
-              <p class="muted">Future premium pack concept</p>
-              <button class="action-btn">View</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- About -->
     <div id="aboutWindow" class="window" style="width:560px;height:420px;left:290px;top:120px;">
       <div class="titlebar" onmousedown="dragStart(event, 'aboutWindow')">
-        <div class="title-left">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg>
-          <span>About Chat Wave OS</span>
-        </div>
-        <div class="title-actions">
-          <button onclick="minimizeWindow('aboutWindow')">—</button>
-          <button onclick="closeWindow('aboutWindow')">✕</button>
-        </div>
+        <div class="title-left"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v5"/><path d="M12 7h.01"/></svg><span>About SRS OS Player</span></div>
+        <div class="title-actions"><button onclick="minimizeWindow('aboutWindow')">—</button><button onclick="closeWindow('aboutWindow')">✕</button></div>
       </div>
       <div class="window-body pane">
         <div class="card">
-          <h2 style="margin-top:0;">Chat Wave OS</h2>
-          <p class="muted">A browser-based desktop gaming launcher with EmulatorJS integration.</p>
-          <p>Use coins to unlock gameplay sessions. Reward Center gives extra coins. Emulator starts only after pressing Start Game.</p>
-          <p><strong>Version:</strong> Updated HTML desktop edition</p>
-          <p><strong>Note:</strong> Use only game files you are allowed to use.</p>
+          <h2 style="margin-top:0;">SRS OS Player</h2>
+          <p class="muted">A desktop-style browser gaming launcher where users earn points from ads and tasks, then spend those points to play games.</p>
+          <p><strong>Starting Wallet:</strong> 15 points</p>
+          <p><strong>Gameplay Rule:</strong> 10 minutes = 5 points</p>
+          <p><strong>Flow:</strong> Ads/Tasks → Wallet → Game Play</p>
         </div>
       </div>
     </div>
 
     <div class="taskbar">
-      <div class="taskbar-left">
-        <button class="start-btn" onclick="toggleStartMenu()">Start</button>
-      </div>
-
+      <div class="taskbar-left"><button class="start-btn" onclick="toggleStartMenu()">Start</button></div>
       <div class="taskbar-center">
-        <button class="tb-app active-app" id="app-emulator" onclick="openApp('emuWindow', 'app-emulator')">Emulator</button>
-        <button class="tb-app" id="app-games" onclick="openApp('gamesWindow', 'app-games')">My Games</button>
+        <button class="tb-app active-app" id="app-emulator" onclick="openApp('emuWindow', 'app-emulator')">Games</button>
+        <button class="tb-app" id="app-tasks" onclick="openApp('taskWindow', 'app-tasks')">Tasks</button>
+        <button class="tb-app" id="app-ads" onclick="openApp('adWindow', 'app-ads')">Ads</button>
         <button class="tb-app" id="app-wallet" onclick="openApp('walletWindow', 'app-wallet')">Wallet</button>
         <button class="tb-app" id="app-rewards" onclick="openApp('rewardWindow', 'app-rewards')">Rewards</button>
-        <button class="tb-app" id="app-settings" onclick="openApp('settingsWindow', 'app-settings')">Settings</button>
       </div>
-
-      <div class="taskbar-right">
-        <button class="reward-btn" onclick="watchAd()">+3 Coins</button>
-        <div class="clock" id="clock">00:00</div>
-      </div>
+      <div class="taskbar-right"><button class="reward-btn" onclick="watchAd()">+3 pts</button><div class="clock" id="clock">00:00</div></div>
     </div>
   </div>
 
   <script>
-    let coins = 10;
+    let coins = 15;
     let sessionSeconds = 0;
     let sessionInterval = null;
     let isRunning = false;
     let gameBooted = false;
     let dailyClaimed = false;
     let wallpaperMode = 0;
+    let tasksCompleted = 0;
+    let todayEarned = 0;
+    let playSessions = 0;
     const rewardLogs = [];
     const walletLogs = [];
+    const taskLogs = [];
 
     function nowTime() {
       const d = new Date();
@@ -1084,143 +889,154 @@
       renderWalletHistory();
     }
 
+    function pushTaskLog(text, amountText) {
+      taskLogs.unshift({ text, amountText, time: nowTime() });
+      renderTaskHistory();
+    }
+
     function renderRewardHistory() {
-      const box = document.getElementById("rewardHistory");
+      const box = document.getElementById('rewardHistory');
       if (!box) return;
       box.innerHTML = rewardLogs.length ? rewardLogs.map(item => `
-        <div class="history-item">
-          <div>
-            <strong>${item.text}</strong><br>
-            <span class="muted">${item.time}</span>
-          </div>
-          <div class="muted">Reward</div>
-        </div>
-      `).join("") : `<div class="muted">No rewards claimed yet.</div>`;
+        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div class="muted">Reward</div></div>
+      `).join('') : `<div class="muted">No rewards claimed yet.</div>`;
     }
 
     function renderWalletHistory() {
-      const box = document.getElementById("walletHistory");
+      const box = document.getElementById('walletHistory');
       if (!box) return;
       box.innerHTML = walletLogs.length ? walletLogs.map(item => `
-        <div class="history-item">
-          <div>
-            <strong>${item.text}</strong><br>
-            <span class="muted">${item.time}</span>
-          </div>
-          <div>${item.amountText}</div>
-        </div>
-      `).join("") : `<div class="muted">No transaction history yet.</div>`;
+        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div>${item.amountText}</div></div>
+      `).join('') : `<div class="muted">No wallet history yet.</div>`;
+    }
+
+    function renderTaskHistory() {
+      const box = document.getElementById('taskHistory');
+      if (!box) return;
+      box.innerHTML = taskLogs.length ? taskLogs.map(item => `
+        <div class="history-item"><div><strong>${item.text}</strong><br><span class="muted">${item.time}</span></div><div>${item.amountText}</div></div>
+      `).join('') : `<div class="muted">No tasks completed yet.</div>`;
     }
 
     function updateCoins() {
-      document.getElementById("coinCount").textContent = coins;
-      document.getElementById("walletCoins").textContent = coins;
+      document.getElementById('coinCount').textContent = coins;
+      document.getElementById('walletCoins').textContent = coins;
+      document.getElementById('taskWalletStat').textContent = coins;
+    }
+
+    function updateStats() {
+      document.getElementById('tasksCompletedStat').textContent = tasksCompleted;
+      document.getElementById('todayEarnedStat').textContent = todayEarned;
+      document.getElementById('playSessionsStat').textContent = playSessions;
+      document.getElementById('walletEarned').textContent = todayEarned;
     }
 
     function setStatus(text) {
-      document.getElementById("statusText").textContent = text;
+      document.getElementById('statusText').textContent = text;
     }
 
     function formatTime(sec) {
-      const m = String(Math.floor(sec / 60)).padStart(2, "0");
-      const s = String(sec % 60).padStart(2, "0");
-      return m + ":" + s;
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return m + ':' + s;
     }
 
     function updateSessionTime() {
-      document.getElementById("sessionTime").textContent = formatTime(sessionSeconds);
+      document.getElementById('sessionTime').textContent = formatTime(sessionSeconds);
     }
 
     function showToast(msg) {
-      const stack = document.getElementById("toastStack");
-      const toast = document.createElement("div");
-      toast.className = "toast";
+      const stack = document.getElementById('toastStack');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
       toast.textContent = msg;
       stack.appendChild(toast);
       setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(-5px)";
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-5px)';
       }, 2200);
       setTimeout(() => toast.remove(), 2600);
     }
 
-    function watchAd() {
-      coins += 3;
+    function addPoints(reason, amount) {
+      coins += amount;
+      todayEarned += amount;
+      tasksCompleted += 1;
       updateCoins();
-      pushRewardLog("Watched ad and earned coins");
-      pushWalletLog("Ad reward", "+3");
-      showToast("Ad watched. You earned 3 coins.");
+      updateStats();
+      pushTaskLog(reason, `+${amount}`);
+      pushWalletLog(reason, `+${amount}`);
+      pushRewardLog(reason);
+      showToast(`${reason}. +${amount} points added.`);
+    }
+
+    function completeTask(reason, amount) {
+      addPoints(reason, amount);
+    }
+
+    function watchAd() {
+      addPoints('Reward ad watched', 3);
     }
 
     function claimDaily() {
       if (dailyClaimed) {
-        showToast("Daily reward already claimed.");
+        showToast('Daily reward already claimed.');
         return;
       }
       dailyClaimed = true;
       coins += 5;
+      todayEarned += 5;
       updateCoins();
-      pushRewardLog("Daily reward claimed");
-      pushWalletLog("Daily reward", "+5");
-      showToast("Daily reward claimed. +5 coins added.");
+      updateStats();
+      pushRewardLog('Daily reward claimed');
+      pushWalletLog('Daily reward', '+5');
+      showToast('Daily reward claimed. +5 points added.');
     }
 
     function bootGameOnce() {
       if (gameBooted) return;
-      if (typeof EJS_emulator !== "undefined" && EJS_emulator && typeof EJS_emulator.play === "function") {
-        try {
-          EJS_emulator.play();
-        } catch (e) {}
+      if (typeof EJS_emulator !== 'undefined' && EJS_emulator && typeof EJS_emulator.play === 'function') {
+        try { EJS_emulator.play(); } catch (e) {}
       }
       gameBooted = true;
     }
 
-    function unlockGameView() {
-      document.getElementById("gameLock").classList.add("hidden");
-    }
-
-    function lockGameView() {
-      document.getElementById("gameLock").classList.remove("hidden");
-    }
+    function unlockGameView() { document.getElementById('gameLock').classList.add('hidden'); }
+    function lockGameView() { document.getElementById('gameLock').classList.remove('hidden'); }
 
     function startGame() {
       openApp('emuWindow', 'app-emulator');
-
       if (isRunning) {
-        showToast("A session is already running.");
+        showToast('A session is already running.');
         return;
       }
-
       if (coins < 5) {
-        showToast("Not enough coins. Watch an ad first.");
+        showToast('Not enough points. Complete tasks or watch ads first.');
         return;
       }
-
       coins -= 5;
+      playSessions += 1;
       updateCoins();
-      pushWalletLog("Gameplay session started", "-5");
+      updateStats();
+      pushWalletLog('Gameplay session started', '-5');
       sessionSeconds = 600;
       updateSessionTime();
       isRunning = true;
-      setStatus("Running");
+      setStatus('Running');
       unlockGameView();
       bootGameOnce();
-      showToast("Game started. 5 coins deducted.");
-
+      showToast('Game started. 5 points deducted for 10 minutes.');
       sessionInterval = setInterval(() => {
         sessionSeconds--;
         updateSessionTime();
-
-        if (sessionSeconds <= 0) {
-          endSession(true);
-        }
+        if (sessionSeconds <= 0) endSession(true);
       }, 1000);
     }
 
     function endSession(auto = false) {
       if (!isRunning && !sessionInterval) {
         lockGameView();
-        setStatus("Locked");
+        setStatus('Locked');
         return;
       }
       if (sessionInterval) clearInterval(sessionInterval);
@@ -1228,34 +1044,25 @@
       isRunning = false;
       sessionSeconds = 0;
       updateSessionTime();
-      setStatus("Locked");
+      setStatus('Locked');
       lockGameView();
-      showToast(auto ? "Session ended. Get more coins to play again." : "Session ended.");
+      showToast(auto ? 'Session ended. Use more points to play again.' : 'Session ended.');
     }
 
     function openApp(id, taskId) {
       const win = document.getElementById(id);
-      win.classList.add("active");
+      win.classList.add('active');
       bringToFront(win);
       markTaskbar(taskId);
-      showToast(win.querySelector(".title-left span:last-child")?.textContent || "App opened");
     }
 
-    function closeWindow(id) {
-      document.getElementById(id).classList.remove("active");
-    }
-
-    function minimizeWindow(id) {
-      document.getElementById(id).classList.remove("active");
-    }
+    function closeWindow(id) { document.getElementById(id).classList.remove('active'); }
+    function minimizeWindow(id) { document.getElementById(id).classList.remove('active'); }
 
     function bringToFront(el) {
-      const all = document.querySelectorAll(".window");
+      const all = document.querySelectorAll('.window');
       let z = 100;
-      all.forEach(w => {
-        w.style.zIndex = z;
-        z++;
-      });
+      all.forEach(w => { w.style.zIndex = z; z++; });
       el.style.zIndex = 999;
     }
 
@@ -1267,131 +1074,114 @@
       }
     }
 
-    function toggleStartMenu() {
-      document.getElementById("startMenu").classList.toggle("active");
-    }
-
-    function closeStartMenu() {
-      document.getElementById("startMenu").classList.remove("active");
-    }
+    function toggleStartMenu() { document.getElementById('startMenu').classList.toggle('active'); }
+    function closeStartMenu() { document.getElementById('startMenu').classList.remove('active'); }
 
     function filterMenu(value) {
       value = value.toLowerCase().trim();
       document.querySelectorAll('#menuGrid .menu-card').forEach(card => {
-        const ok = card.dataset.name.includes(value);
-        card.style.display = ok ? '' : 'none';
+        card.style.display = card.dataset.name.includes(value) ? '' : 'none';
       });
     }
 
     function toggleMaximize(id) {
       const win = document.getElementById(id);
-      if (win.dataset.max === "1") {
+      if (win.dataset.max === '1') {
         win.style.top = win.dataset.prevTop;
         win.style.left = win.dataset.prevLeft;
         win.style.width = win.dataset.prevWidth;
         win.style.height = win.dataset.prevHeight;
-        win.dataset.max = "0";
+        win.dataset.max = '0';
       } else {
-        win.dataset.prevTop = win.style.top || "100px";
-        win.dataset.prevLeft = win.style.left || "180px";
-        win.dataset.prevWidth = win.style.width || "920px";
-        win.dataset.prevHeight = win.style.height || "580px";
-        win.style.top = "10px";
-        win.style.left = "10px";
-        win.style.width = "calc(100% - 20px)";
-        win.style.height = "calc(100% - 88px)";
-        win.dataset.max = "1";
+        win.dataset.prevTop = win.style.top || '100px';
+        win.dataset.prevLeft = win.style.left || '180px';
+        win.dataset.prevWidth = win.style.width || '920px';
+        win.dataset.prevHeight = win.style.height || '580px';
+        win.style.top = '10px';
+        win.style.left = '10px';
+        win.style.width = 'calc(100% - 20px)';
+        win.style.height = 'calc(100% - 88px)';
+        win.dataset.max = '1';
       }
     }
 
     let dragData = null;
     function dragStart(e, id) {
-      if (e.target.tagName === "BUTTON") return;
+      if (e.target.tagName === 'BUTTON') return;
       const win = document.getElementById(id);
       bringToFront(win);
-      dragData = {
-        el: win,
-        startX: e.clientX,
-        startY: e.clientY,
-        left: win.offsetLeft,
-        top: win.offsetTop
-      };
-      document.addEventListener("mousemove", dragging);
-      document.addEventListener("mouseup", dragEnd);
+      dragData = { el: win, startX: e.clientX, startY: e.clientY, left: win.offsetLeft, top: win.offsetTop };
+      document.addEventListener('mousemove', dragging);
+      document.addEventListener('mouseup', dragEnd);
     }
 
     function dragging(e) {
       if (!dragData) return;
-      if (dragData.el.dataset.max === "1") return;
+      if (dragData.el.dataset.max === '1') return;
       const dx = e.clientX - dragData.startX;
       const dy = e.clientY - dragData.startY;
-      dragData.el.style.left = dragData.left + dx + "px";
-      dragData.el.style.top = dragData.top + dy + "px";
+      dragData.el.style.left = dragData.left + dx + 'px';
+      dragData.el.style.top = dragData.top + dy + 'px';
     }
 
     function dragEnd() {
-      document.removeEventListener("mousemove", dragging);
-      document.removeEventListener("mouseup", dragEnd);
+      document.removeEventListener('mousemove', dragging);
+      document.removeEventListener('mouseup', dragEnd);
       dragData = null;
     }
 
     function updateClock() {
       const now = new Date();
-      const h = String(now.getHours()).padStart(2, "0");
-      const m = String(now.getMinutes()).padStart(2, "0");
-      document.getElementById("clock").textContent = h + ":" + m;
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = h + ':' + m;
     }
 
-    function toggleSwitch(el) {
-      el.classList.toggle("on");
-    }
+    function toggleSwitch(el) { el.classList.toggle('on'); }
 
     function toggleTheme(el) {
-      el.classList.toggle("on");
-      document.body.classList.toggle("light");
-      showToast(document.body.classList.contains("light") ? "Light mode enabled" : "Dark mode enabled");
+      el.classList.toggle('on');
+      document.body.classList.toggle('light');
+      showToast(document.body.classList.contains('light') ? 'Light mode enabled' : 'Dark mode enabled');
     }
 
     function changeWallpaper() {
       wallpaperMode = (wallpaperMode + 1) % 3;
       if (wallpaperMode === 0) {
-        document.body.style.background =
-          "radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 20%), radial-gradient(circle at bottom left, rgba(96,165,250,0.18), transparent 24%), linear-gradient(135deg, #08111e 0%, #102341 40%, #14305d 100%)";
+        document.body.style.background = 'radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 20%), radial-gradient(circle at bottom left, rgba(96,165,250,0.18), transparent 24%), linear-gradient(135deg, #08111e 0%, #102341 40%, #14305d 100%)';
       } else if (wallpaperMode === 1) {
-        document.body.style.background =
-          "radial-gradient(circle at 20% 20%, rgba(168,85,247,0.18), transparent 24%), radial-gradient(circle at 80% 80%, rgba(59,130,246,0.18), transparent 24%), linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #1d4ed8 100%)";
+        document.body.style.background = 'radial-gradient(circle at 20% 20%, rgba(168,85,247,0.18), transparent 24%), radial-gradient(circle at 80% 80%, rgba(59,130,246,0.18), transparent 24%), linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #1d4ed8 100%)';
       } else {
-        document.body.style.background =
-          "radial-gradient(circle at 15% 15%, rgba(16,185,129,0.12), transparent 22%), radial-gradient(circle at 85% 15%, rgba(37,99,235,0.18), transparent 22%), linear-gradient(135deg, #09121c 0%, #12334b 45%, #0b3b59 100%)";
+        document.body.style.background = 'radial-gradient(circle at 15% 15%, rgba(16,185,129,0.12), transparent 22%), radial-gradient(circle at 85% 15%, rgba(37,99,235,0.18), transparent 22%), linear-gradient(135deg, #09121c 0%, #12334b 45%, #0b3b59 100%)';
       }
-      showToast("Wallpaper changed");
+      showToast('Wallpaper changed');
     }
 
     updateCoins();
+    updateStats();
     updateSessionTime();
     renderRewardHistory();
     renderWalletHistory();
+    renderTaskHistory();
     updateClock();
     setInterval(updateClock, 1000);
-    setStatus("Locked");
+    setStatus('Locked');
     lockGameView();
 
-    document.addEventListener("click", function(e) {
-      if (!e.target.closest(".start-btn") && !e.target.closest(".start-menu")) {
-        closeStartMenu();
-      }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.start-btn') && !e.target.closest('.start-menu')) closeStartMenu();
     });
   </script>
 
   <script>
-    EJS_player = "#game";
-    EJS_core = "gba";
-    EJS_gameName = "Pokemon";
-    EJS_color = "#0064ff";
+    EJS_player = '#game';
+    EJS_core = 'gba';
+    EJS_gameName = 'Pokemon';
+    EJS_color = '#0064ff';
     EJS_startOnLoaded = false;
-    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-    EJS_gameUrl = "./pokemon.gba";
-    EJS_biosUrl = "./gba_bios.bin";
+    EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    EJS_gameUrl = './pokemon.gba';
+    EJS_biosUrl = './gba_bios.bin';
   </script>
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body>
