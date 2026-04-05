@@ -103,15 +103,13 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       transition: transform .18s ease, background .18s ease;
+      font-size: 26px;
     }
 
     .icon:hover .icon-box {
       transform: translateY(-2px) scale(1.03);
       background: var(--glass-2);
     }
-
-    .icon svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.9; }
-    body.light .icon svg { stroke: #1f4dbf; }
 
     .taskbar {
       position: absolute;
@@ -209,14 +207,6 @@
       gap: 10px;
       font-size: 15px;
       font-weight: 600;
-    }
-
-    .title-left svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
     }
 
     .title-actions {
@@ -326,21 +316,39 @@
       font-size: 14px;
     }
 
-    .emulator-wrap {
+    .game-shell {
       position: absolute;
-      inset: 0;
-      padding-top: 72px;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .sidebar-panel {
+      overflow: auto;
+    }
+
+    .emulator-panel {
+      position: relative;
       background: #05070e;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     #game {
       width: 100%;
       height: 100%;
+      min-height: 400px;
     }
 
     .game-lock {
       position: absolute;
-      inset: 72px 0 0 0;
+      inset: 0;
       background: linear-gradient(180deg, rgba(5,8,15,0.6), rgba(5,8,15,0.92));
       display: flex;
       align-items: center;
@@ -548,6 +556,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
     }
 
     @media (max-width: 980px) {
@@ -559,6 +568,7 @@
       }
       .taskbar-center { display: none; }
       .desktop-icons { grid-template-columns: repeat(2, 82px); }
+      .game-shell { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -634,26 +644,27 @@
           </div>
         </div>
 
-        <div style="position:absolute; top:72px; left:0; right:0; padding:14px; z-index:10;">
-          <div class="card" style="margin-bottom:10px;">
-            <h3 style="margin-top:0;">Game Library</h3>
-            <div id="gameLibrary" class="card-grid">
-              <div class="muted">Loading games...</div>
+        <div class="game-shell">
+          <div class="sidebar-panel">
+            <div class="card">
+              <h3 style="margin-top:0;">Game Library</h3>
+              <div id="gameLibrary" class="card-grid">
+                <div class="muted">Loading games...</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="emulator-wrap" style="top:280px;">
-          <div id="game"></div>
-        </div>
-
-        <div class="game-lock" id="gameLock" style="top:352px;">
-          <div class="lock-card">
-            <h2 style="margin:0 0 10px;">Game Session Locked</h2>
-            <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">
-              Selected game play করতে points লাগবে। আগে game select করো, তারপর start দাও।
-            </p>
-            <button class="action-btn primary" onclick="startGame()">Unlock & Start</button>
+          <div class="emulator-panel">
+            <div id="game"></div>
+            <div class="game-lock" id="gameLock">
+              <div class="lock-card">
+                <h2 style="margin:0 0 10px;">Game Session Locked</h2>
+                <p class="muted" style="margin:0 0 16px;color:#d7e6ff;">
+                  আগে game select করো, তারপর Start Game চাপো।
+                </p>
+                <button class="action-btn primary" onclick="startGame()">Unlock & Start</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -674,17 +685,17 @@
         <div class="card-grid">
           <div class="card">
             <h3>Watch Reward Ad</h3>
-            <p class="muted">Watch a quick ad demo and earn 3 points.</p>
+            <p class="muted">Click করলে demo reward add হবে।</p>
             <button class="action-btn success" onclick="completeTask('Reward ad watched', 3)">Watch Ad +3</button>
           </div>
           <div class="card">
             <h3>Daily Bonus Task</h3>
-            <p class="muted">Complete your daily task to receive 4 points.</p>
+            <p class="muted">Complete daily task.</p>
             <button class="action-btn primary" onclick="completeTask('Daily task completed', 4)">Complete Daily +4</button>
           </div>
           <div class="card">
             <h3>Offerwall Task</h3>
-            <p class="muted">Demo offerwall completion adds 6 points.</p>
+            <p class="muted">Demo offerwall reward.</p>
             <button class="action-btn purple" onclick="completeTask('Offerwall task completed', 6)">Offer Task +6</button>
           </div>
         </div>
@@ -704,19 +715,21 @@
         <div class="card-grid">
           <div class="card">
             <h3>Adsterra Banner Zone</h3>
-            <div class="ad-box">
-              <div id="adsterra-banner-slot">Adsterra banner will load here</div>
+            <div class="ad-box" id="adsterra-banner-slot">
+              Adsterra banner code এখানে বসাবে
             </div>
           </div>
           <div class="card">
             <h3>Rewarded Demo</h3>
-            <p class="muted">User reward manually add করা আছে।</p>
+            <p class="muted">Manual reward system ready.</p>
             <button class="action-btn success" onclick="completeTask('Rewarded ad completed', 3)">Watch Rewarded +3</button>
           </div>
           <div class="card">
-            <h3>Social Bar / Direct Link</h3>
+            <h3>Adsterra Direct Link</h3>
             <div class="ad-box">
-              <a href="#" id="adsterraDirectLink" target="_blank" style="color:white;">Your Adsterra direct link</a>
+              <a id="adsterraDirectLink" href="#" target="_blank" style="color:#fff;text-decoration:none;">
+                Open Sponsored Link
+              </a>
             </div>
           </div>
         </div>
@@ -746,7 +759,7 @@
         <div class="card-grid">
           <div class="card"><div class="muted">Current Balance</div><div class="wallet-stat" id="walletCoins">15</div><div class="muted">Points available for gameplay</div></div>
           <div class="card"><div class="muted">Selected Game Cost</div><div class="wallet-stat" id="selectedGameCost">5</div><div class="muted">Points deducted for one session</div></div>
-          <div class="card"><div class="muted">Today Earned</div><div class="wallet-stat" id="walletEarned">0</div><div class="muted">Total points earned from ads and tasks</div></div>
+          <div class="card"><div class="muted">Today Earned</div><div class="wallet-stat" id="walletEarned">0</div><div class="muted">Total earned today</div></div>
         </div>
         <div style="margin-top:18px;">
           <h3 style="margin-bottom:10px;">Wallet History</h3>
@@ -812,12 +825,13 @@
     let isRunning = false;
     let gameBooted = false;
     let dailyClaimed = false;
-    let wallpaperMode = 0;
     let tasksCompleted = 0;
     let todayEarned = 0;
     let playSessions = 0;
     let currentGame = null;
     let gamesMap = {};
+    let emuLoaderReady = false;
+
     const rewardLogs = [];
     const walletLogs = [];
     const taskLogs = [];
@@ -921,7 +935,7 @@
           updatedAt: Date.now()
         });
       } catch (e) {
-        console.error(e);
+        console.error("saveUserState error:", e);
       }
     }
 
@@ -934,13 +948,15 @@
           time: Date.now()
         });
       } catch (e) {
-        console.error(e);
+        console.error("addWalletHistory error:", e);
       }
     }
 
     async function loadUserState() {
       try {
-        const snap = await get(ref(db, `users/${currentUserId}`));
+        const userRef = ref(db, `users/${currentUserId}`);
+        const snap = await get(userRef);
+
         if (snap.exists()) {
           const d = snap.val();
           coins = d.coins ?? 15;
@@ -949,7 +965,7 @@
           playSessions = d.playSessions ?? 0;
           dailyClaimed = d.dailyClaimed ?? false;
         } else {
-          await set(ref(db, `users/${currentUserId}`), {
+          await set(userRef, {
             coins: 15,
             tasksCompleted: 0,
             todayEarned: 0,
@@ -958,21 +974,13 @@
             createdAt: Date.now()
           });
         }
+
         updateCoinsUI();
         updateStatsUI();
       } catch (e) {
-        console.error(e);
+        console.error("loadUserState error:", e);
+        showToast("Firebase permission error. Rules publish korte hobe.");
       }
-    }
-
-    function selectGame(gameId) {
-      const game = gamesMap[gameId];
-      if (!game) return;
-      currentGame = { ...game, id: gameId };
-      document.getElementById("currentGameName").textContent = game.title || "Unknown";
-      document.getElementById("selectedGameCost").textContent = game.cost || 5;
-      saveUserState();
-      showToast(`${game.title} selected`);
     }
 
     function renderGameLibrary(games) {
@@ -993,7 +1001,7 @@
               ${game.cover ? `<img src="${game.cover}" alt="${game.title}">` : `🎮`}
             </div>
             <h3 style="margin:0 0 8px;">${game.title || "Untitled Game"}</h3>
-            <p class="muted" style="margin:0 0 10px;">Core: ${game.core || "gba"}</p>
+            <p class="muted" style="margin:0 0 8px;">Core: ${game.core || "gba"}</p>
             <p class="muted" style="margin:0 0 10px;">Cost: ${game.cost || 5} pts</p>
             <button class="action-btn primary" onclick="window.selectGameFromUI('${id}')">Select</button>
           </div>
@@ -1002,25 +1010,52 @@
     }
 
     async function loadGames() {
-      onValue(ref(db, "games"), (snap) => {
-        renderGameLibrary(snap.val() || {});
-      });
+      try {
+        onValue(ref(db, "games"), (snap) => {
+          renderGameLibrary(snap.val() || {});
+        });
+      } catch (e) {
+        console.error("loadGames error:", e);
+      }
     }
 
-    function setEmulatorGame(game) {
+    function selectGame(gameId) {
+      const game = gamesMap[gameId];
       if (!game) return;
+      currentGame = { ...game, id: gameId };
+      document.getElementById("currentGameName").textContent = game.title || "Unknown";
+      document.getElementById("selectedGameCost").textContent = game.cost || 5;
+      saveUserState();
+      showToast(`${game.title} selected`);
+    }
+
+    function unlockGameView() {
+      document.getElementById('gameLock').classList.add('hidden');
+    }
+
+    function lockGameView() {
+      document.getElementById('gameLock').classList.remove('hidden');
+    }
+
+    function destroyOldEmulator() {
+      const gameBox = document.getElementById("game");
+      gameBox.innerHTML = "";
+      if (window.EJS_emulator) {
+        try { window.EJS_emulator = null; } catch (e) {}
+      }
+    }
+
+    function loadEmulator(game) {
+      destroyOldEmulator();
 
       window.EJS_player = '#game';
       window.EJS_core = game.core || 'gba';
       window.EJS_gameName = game.title || 'Game';
       window.EJS_color = '#0064ff';
-      window.EJS_startOnLoaded = false;
+      window.EJS_startOnLoaded = true;
       window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
       window.EJS_gameUrl = game.fileUrl;
-      window.EJS_biosUrl = game.biosUrl || './gba_bios.bin';
-
-      const oldCanvas = document.getElementById("game");
-      oldCanvas.innerHTML = "";
+      window.EJS_biosUrl = game.biosUrl || '';
 
       const oldScript = document.getElementById("emuLoaderScript");
       if (oldScript) oldScript.remove();
@@ -1028,21 +1063,25 @@
       const script = document.createElement("script");
       script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
       script.id = "emuLoaderScript";
+      script.onload = () => {
+        emuLoaderReady = true;
+      };
       document.body.appendChild(script);
-
-      gameBooted = false;
     }
 
-    function bootGameOnce() {
-      if (gameBooted) return;
-      if (typeof EJS_emulator !== 'undefined' && EJS_emulator && typeof EJS_emulator.play === 'function') {
-        try { EJS_emulator.play(); } catch (e) {}
-      }
-      gameBooted = true;
+    function addPoints(reason, amount) {
+      coins += amount;
+      todayEarned += amount;
+      tasksCompleted += 1;
+      updateCoinsUI();
+      updateStatsUI();
+      pushTaskLog(reason, `+${amount}`);
+      pushWalletLog(reason, `+${amount}`);
+      pushRewardLog(reason);
+      addWalletHistory("reward", reason, amount);
+      saveUserState();
+      showToast(`${reason}. +${amount} points added.`);
     }
-
-    function unlockGameView() { document.getElementById('gameLock').classList.add('hidden'); }
-    function lockGameView() { document.getElementById('gameLock').classList.remove('hidden'); }
 
     window.selectGameFromUI = function(gameId) {
       selectGame(gameId);
@@ -1063,7 +1102,7 @@
 
       const cost = currentGame.cost || 5;
       if (coins < cost) {
-        showToast('Not enough points. Complete tasks or watch ads first.');
+        showToast('Not enough points.');
         return;
       }
 
@@ -1074,34 +1113,26 @@
       pushWalletLog(`${currentGame.title} session started`, `-${cost}`);
       await addWalletHistory("play", `${currentGame.title} session started`, -cost);
 
-      setEmulatorGame(currentGame);
-
       sessionSeconds = currentGame.sessionSeconds || 600;
       updateSessionTime();
       isRunning = true;
       setStatus('Running');
       unlockGameView();
 
-      setTimeout(() => {
-        bootGameOnce();
-      }, 1400);
-
+      loadEmulator(currentGame);
       showToast(`Game started: ${currentGame.title}`);
-      saveUserState();
+      await saveUserState();
 
       sessionInterval = setInterval(async () => {
         sessionSeconds--;
         updateSessionTime();
-        if (sessionSeconds <= 0) await endSession(true);
+        if (sessionSeconds <= 0) {
+          await endSession(true);
+        }
       }, 1000);
     };
 
     window.endSession = async function(auto = false) {
-      if (!isRunning && !sessionInterval) {
-        lockGameView();
-        setStatus('Locked');
-        return;
-      }
       if (sessionInterval) clearInterval(sessionInterval);
       sessionInterval = null;
       isRunning = false;
@@ -1109,23 +1140,9 @@
       updateSessionTime();
       setStatus('Locked');
       lockGameView();
-      showToast(auto ? 'Session ended. Use more points to play again.' : 'Session ended.');
+      showToast(auto ? 'Session ended. Play again with points.' : 'Session ended.');
       await saveUserState();
     };
-
-    function addPoints(reason, amount) {
-      coins += amount;
-      todayEarned += amount;
-      tasksCompleted += 1;
-      updateCoinsUI();
-      updateStatsUI();
-      pushTaskLog(reason, `+${amount}`);
-      pushWalletLog(reason, `+${amount}`);
-      pushRewardLog(reason);
-      addWalletHistory("reward", reason, amount);
-      saveUserState();
-      showToast(`${reason}. +${amount} points added.`);
-    }
 
     window.completeTask = function(reason, amount) {
       addPoints(reason, amount);
@@ -1159,8 +1176,13 @@
       markTaskbar(taskId);
     };
 
-    window.closeWindow = function(id) { document.getElementById(id).classList.remove('active'); };
-    window.minimizeWindow = function(id) { document.getElementById(id).classList.remove('active'); };
+    window.closeWindow = function(id) {
+      document.getElementById(id).classList.remove('active');
+    };
+
+    window.minimizeWindow = function(id) {
+      document.getElementById(id).classList.remove('active');
+    };
 
     function bringToFront(el) {
       const all = document.querySelectorAll('.window');
@@ -1177,8 +1199,13 @@
       }
     }
 
-    window.toggleStartMenu = function() { document.getElementById('startMenu').classList.toggle('active'); };
-    window.closeStartMenu = function() { document.getElementById('startMenu').classList.remove('active'); };
+    window.toggleStartMenu = function() {
+      document.getElementById('startMenu').classList.toggle('active');
+    };
+
+    window.closeStartMenu = function() {
+      document.getElementById('startMenu').classList.remove('active');
+    };
 
     window.filterMenu = function(value) {
       value = value.toLowerCase().trim();
@@ -1240,7 +1267,9 @@
       document.getElementById('clock').textContent = h + ':' + m;
     }
 
-    window.toggleSwitch = function(el) { el.classList.toggle('on'); };
+    window.toggleSwitch = function(el) {
+      el.classList.toggle('on');
+    };
 
     window.toggleTheme = function(el) {
       el.classList.toggle('on');
@@ -1248,10 +1277,8 @@
       showToast(document.body.classList.contains('light') ? 'Light mode enabled' : 'Dark mode enabled');
     };
 
-    // Adsterra direct link example
     document.getElementById("adsterraDirectLink").href = "https://www.profitableratecpm.com/REPLACE_WITH_YOUR_LINK";
 
-    // Init
     updateCoinsUI();
     updateStatsUI();
     updateSessionTime();
@@ -1271,19 +1298,7 @@
     await loadGames();
   </script>
 
-  <!-- Emulator default vars -->
-  <script>
-    window.EJS_player = '#game';
-    window.EJS_core = 'gba';
-    window.EJS_gameName = 'Pokemon';
-    window.EJS_color = '#0064ff';
-    window.EJS_startOnLoaded = false;
-    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-    window.EJS_gameUrl = './pokemon.gba';
-    window.EJS_biosUrl = './gba_bios.bin';
-  </script>
-
-  <!-- Adsterra banner example: YOUR REAL CODE এখানেই বসাবে -->
+  <!-- Adsterra code example -->
   <!--
   <script type="text/javascript">
     atOptions = {
